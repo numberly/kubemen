@@ -1,0 +1,147 @@
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kubemen
+  labels:
+    app: kubemen
+  namespace: default
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "watch", "list"]
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubemen
+  labels:
+    app: kubemen
+  namespace: default
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: kubemen
+  labels:
+    app: kubemen
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kubemen
+subjects:
+  - kind: ServiceAccount
+    name: kubemen
+    namespace: default
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: kubemen
+  labels:
+    app: kubemen
+  namespace: default
+webhooks:
+- name: kubemen.numberly.com
+  rules:
+  - operations: ["UPDATE"] 
+    apiGroups: ["apps"]
+    apiVersions: ["v1"]
+    resources: ["deployments"]
+    scope: "Namespaced"
+  clientConfig:
+    url: "https://kubemen.numberly.com"
+  admissionReviewVersions:
+  - v1beta1
+  timeoutSeconds: 1
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubemen
+  labels:
+    app: kubemen
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: kubemen
+  template:
+    metadata:
+      name: kubemen
+      labels:
+        app: kubemen
+    spec:
+      securityContext:
+        runAsUser: 65534 # nobody
+      containers:
+      - name: kubemen
+        image: numberly/kubemen
+        env:
+        - name: GUNICORN_CMD_ARGS
+          value: "-b 0.0.0.0 -k gevent --access-logfile '-'"
+        - name: MATTERMOST_HOOK_URL
+          value: ""
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+        resources:
+          limits:
+            cpu: 50m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubemen
+  labels:
+    app: kubemen
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: kubemen
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8000
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kubemen
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+  labels:
+    app: kubemen
+  namespace: default
+spec:
+  rules:
+  - host: kubemen.numberly.com
+    http:
+      paths:
+      - backend:
+          serviceName: kubemen
+          servicePort: 80
+  tls:
+  - hosts:
+    - kubemen.numberly.com
+    secretName: tls-kubemen
