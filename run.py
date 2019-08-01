@@ -1,3 +1,4 @@
+import difflib
 import json
 from os import getenv
 
@@ -18,6 +19,14 @@ MATTERMOST_HOOK_URL = getenv("MATTERMOST_HOOK_URL")
 @app.route("/", methods=["GET"])
 def get():
     return 200
+
+
+def yaml_diff(d1, d2):
+    yaml1 = yaml.dump(d1)
+    yaml2 = yaml.dump(d2)
+    diff = difflib.unified_diff(yaml1.splitlines(keepends=True),
+                                yaml2.splitlines(keepends=True))
+    return ''.join(diff)
 
 
 @app.route("/", methods=["POST"])
@@ -51,11 +60,11 @@ def post():
         for container in spec["containers"]:
             text += "\n  - `{}`".format(container["image"])
 
-    # WIP: Append diff of resource configuration for updates
+    # Append diff of resource configuration for updates
     if operation == "UPDATE":
-        yaml_object = yaml.dump(review["request"]["object"])
-        yaml_old_object = yaml.dump(review["request"]["oldObject"])
-        # text += "```diff\n{}\n```".format(diff)
+        diff = yaml_diff(review["request"]["oldObject"],
+                         review["request"]["object"])
+        text += "\n```diff\n{}\n```".format(diff)
 
     requests.post(MATTERMOST_HOOK_URL, data=json.dumps({"text": text}))
     return review
