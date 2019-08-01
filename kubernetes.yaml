@@ -7,8 +7,32 @@ metadata:
     app: kubemen
   namespace: default
 rules:
-- apiGroups: ["apps"]
-  resources: ["deployments"]
+- apiGroups: ["*"]
+  resources: [
+  "cronjobs",
+  "daemonsets",
+  "deployments",
+  "events",
+  "horizontalpodautoscalers",
+  "ingresses",
+  "jobs",
+  "pods",
+  "replicasets",
+  "replicationcontrollers",
+  "services",
+  "statefulsets",
+  "certificates",
+  "configmaps",
+  "endpoints",
+  "limitranges",
+  "networkpolicies",
+  "persistentvolumeclaims",
+  "resourcequotas",
+  "rolebindings",
+  "roles",
+  "secrets",
+  "serviceaccounts"
+  ]
   verbs: ["get", "watch", "list"]
 
 ---
@@ -48,10 +72,34 @@ metadata:
 webhooks:
 - name: kubemen.numberly.com
   rules:
-  - operations: ["UPDATE"] 
-    apiGroups: ["apps"]
-    apiVersions: ["v1"]
-    resources: ["deployments"]
+  - operations: ["CREATE", "UPDATE", "DELETE"]
+    apiGroups: ["*"]
+    apiVersions: ["*"]
+    resources: [
+    "cronjobs",
+    "daemonsets",
+    "deployments",
+    "events",
+    "horizontalpodautoscalers",
+    "ingresses",
+    "jobs",
+    "pods",
+    "replicasets",
+    "replicationcontrollers",
+    "services",
+    "statefulsets",
+    "certificates",
+    "configmaps",
+    "endpoints",
+    "limitranges",
+    "networkpolicies",
+    "persistentvolumeclaims",
+    "resourcequotas",
+    "rolebindings",
+    "roles",
+    "secrets",
+    "serviceaccounts"
+    ]
     scope: "Namespaced"
   clientConfig:
     url: "https://kubemen.numberly.com"
