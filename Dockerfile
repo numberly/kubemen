@@ -1,11 +1,7 @@
 FROM python:3.7-slim
-
 WORKDIR /app
-
-COPY requirements.txt .
-COPY run.py .
-
-RUN pip install -r requirements.txt
 RUN pip install gunicorn["gevent"]
-
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY run.py .
 CMD ["gunicorn", "run:app"]
