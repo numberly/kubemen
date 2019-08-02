@@ -27,6 +27,7 @@ MATTERMOST_HOOK_URL = getenv("MATTERMOST_HOOK_URL")
 
 @app.route("/", methods=["GET"])
 def get():
+    """200 as a service, for Kubernetes probes"""
     return 200
 
 
