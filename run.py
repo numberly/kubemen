@@ -1,5 +1,6 @@
 import difflib
 import json
+import random
 import re
 from os import getenv
 
@@ -21,6 +22,21 @@ USELESS_PATHS = (
     r'.*\.annotations\["kubectl\.kubernetes\.io/restartedAt"\]'
 )
 MATTERMOST_HOOK_URL = getenv("MATTERMOST_HOOK_URL")
+# TODO: nice icons
+WATCHMEN_MEMBERS = [
+    {"username": "Doctor Manhattan",
+     "icon_url": ""},
+    {"username": "Nite Owl",
+     "icon_url": ""},
+    {"username": "Ozymandias",
+     "icon_url": ""},
+    {"username": "Rorschach",
+     "icon_url": ""},
+    {"username": "Silk Spectre",
+     "icon_url": ""},
+    {"username": "The Comedian",
+     "icon_url": ""}
+]
 
 
 @app.route("/", methods=["GET"])
@@ -129,9 +145,8 @@ def post():
             attachment["fields"].append(field)
 
     # TODO: retrieve channel_id from annotation
-    # TODO: change icon_url/username based on resource
-    message = {"channel_id": "bot",
-               "text": text}
+    message = {"channel_id": "bot", "text": text,
+               **random.choice(WATCHMEN_MEMBERS)}
     if attachment["fields"]:
         message.update({"attachments": [attachment]})
     requests.post(MATTERMOST_HOOK_URL, data=json.dumps(message))
