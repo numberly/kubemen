@@ -25,8 +25,9 @@ def yaml_diff(d1, d2):
     yaml1 = yaml.dump(d1)
     yaml2 = yaml.dump(d2)
     diff = difflib.unified_diff(yaml1.splitlines(keepends=True),
-                                yaml2.splitlines(keepends=True))
-    return ''.join(diff)
+                                yaml2.splitlines(keepends=True),
+                                n=2)  # number of context lines
+    return "".join(list(diff)[2:])  # remove control and blank lines
 
 
 @app.route("/", methods=["POST"])
@@ -64,7 +65,7 @@ def post():
     if operation == "UPDATE":
         diff = yaml_diff(review["request"]["oldObject"],
                          review["request"]["object"])
-        text += "\n```diff\n{}\n```".format(diff)
+        text += "\n```diff\n{}```".format(diff)
 
     requests.post(MATTERMOST_HOOK_URL, data=json.dumps({"text": text}))
     return review
