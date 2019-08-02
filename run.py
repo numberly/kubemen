@@ -1,5 +1,6 @@
 import difflib
 import json
+from copy import deepcopy
 from os import getenv
 
 import requests
@@ -15,6 +16,12 @@ ATTACHMENTS_STYLE = {
     "UPDATE": {"color": "#1e90ff", "emoji": ":recycle:"},
     "DELETE": {"color": "#dc143c", "emoji": ":x:"}
 }
+USELESS_PATHS = (
+    ("metadata", "annotations", "kubectl.kubernetes.io/last-applied-configuration"),
+    ("metadata", "annotations", "kubectl.kubernetes.io/restartedAt"),
+    ("metadata", "generation"),
+    ("spec", "template", "metadata", "annotations", "kubectl.kubernetes.io/restartedAt")
+)
 MATTERMOST_HOOK_URL = getenv("MATTERMOST_HOOK_URL")
 
 
@@ -23,14 +30,35 @@ def get():
     return 200
 
 
-# TODO: extract generation from diff
-# TODO: ignore kubectl.kubernetes.io/last-applied-configuration diff
+def delete_key(dict_or_dicts, path, *paths_left):
+    if isinstance(dict_or_dicts, dict):
+        if path not in dict_or_dicts:
+            return False
+        if paths_left:
+            return delete_key(dict_or_dicts[path], *paths_left)
+        del dict_or_dicts[path]
+        return True
+    elif isinstance(dict_or_dicts, list):
+        result = True
+        for i, d in enumerate(dict_or_dicts):
+            result &= delete_key(d, path, *paths_left)
+        return result
+    return False
+
+
 def yaml_diff(d1, d2):
+    d1 = deepcopy(d1)
+    d2 = deepcopy(d2)
+
+    for d in d1, d2:
+        for paths in USELESS_PATHS:
+            delete_key(d, *paths)
+
     yaml1 = yaml.dump(d1)
     yaml2 = yaml.dump(d2)
     diff = difflib.unified_diff(yaml1.splitlines(keepends=True),
                                 yaml2.splitlines(keepends=True),
-                                n=2)  # number of context lines
+                                n=0)  # number of context lines
     return "".join(list(diff)[2:])  # remove control and blank lines
 
 
