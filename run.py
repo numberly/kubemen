@@ -10,9 +10,11 @@ from flask_stupe.json import Stupeflask
 app = Stupeflask(__name__)
 
 
-EMOJIS = {"CREATE": ":rocket:",
-          "UPDATE": ":recycle:",
-          "DELETE": ":x:"}
+ATTACHMENTS_STYLE = {
+    "CREATE": {"color": "#228b22", "emoji": ":rocket:"},
+    "UPDATE": {"color": "#1e90ff", "emoji": ":recycle:"},
+    "DELETE": {"color": "#dc143c", "emoji": ":x:"}
+}
 MATTERMOST_HOOK_URL = getenv("MATTERMOST_HOOK_URL")
 
 
@@ -21,6 +23,8 @@ def get():
     return 200
 
 
+# TODO: extract generation from diff
+# TODO: ignore kubectl.kubernetes.io/last-applied-configuration diff
 def yaml_diff(d1, d2):
     yaml1 = yaml.dump(d1)
     yaml2 = yaml.dump(d2)
@@ -51,23 +55,40 @@ def post():
         name = review["request"]["object"]["metadata"]["name"]
     namespace = review["request"]["namespace"]
 
-    text = "{} | {} | {} | {} **{}** {}d by *{}*"
-    text = text.format(EMOJIS[operation], hashtag, namespace, kind, name,
+    color = ATTACHMENTS_STYLE[operation]["color"]
+    emoji = ATTACHMENTS_STYLE[operation]["emoji"]
+    text = "{} | {} | **{}** | {} **{}** *{}d* by `{}`"
+    text = text.format(emoji, hashtag, namespace, kind, name,
                        operation.lower(), username.split("@")[0])
+    attachment = {"color": color, "fields": []}
 
-    # Append list of images to message for a Deployment
+    # Append list of images to message for a Deployment update
     if kind == "Deployment" and operation != "DELETE":
+        field = {"short": False,
+                 "title": "Images",
+                 "value": ""}
         spec = review["request"]["object"]["spec"]["template"]["spec"]
         for container in spec["containers"]:
-            text += "\n  - `{}`".format(container["image"])
+            field["value"] += "- `{}`\n".format(container["image"])
+        attachment["fields"].append(field)
 
     # Append diff of resource configuration for updates
+    # TODO: append only if yaml-diff annotation if specified
     if operation == "UPDATE":
         diff = yaml_diff(review["request"]["oldObject"],
                          review["request"]["object"])
-        text += "\n```diff\n{}```".format(diff)
+        field = {"short": False,
+                 "title": "YAML configuration diff",
+                 "value": "```diff\n{}```".format(diff)}
+        attachment["fields"].append(field)
 
-    requests.post(MATTERMOST_HOOK_URL, data=json.dumps({"text": text}))
+    # TODO: retrieve channel_id from annotation
+    # TODO: change icon_url/username based on resource
+    message = {"channel_id": "bot",
+               "text": text}
+    if attachment["fields"]:
+        message.update({"attachments": [attachment]})
+    requests.post(MATTERMOST_HOOK_URL, data=json.dumps(message))
     return review
 
 
