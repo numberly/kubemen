@@ -1,10 +1,9 @@
 import difflib
 import json
-from copy import deepcopy
+import re
 from os import getenv
 
 import requests
-import yaml
 from flask import request
 from flask_stupe.json import Stupeflask
 
@@ -17,10 +16,9 @@ ATTACHMENTS_STYLE = {
     "DELETE": {"color": "#dc143c", "emoji": ":x:"}
 }
 USELESS_PATHS = (
-    ("metadata", "annotations", "kubectl.kubernetes.io/last-applied-configuration"),
-    ("metadata", "annotations", "kubectl.kubernetes.io/restartedAt"),
-    ("metadata", "generation"),
-    ("spec", "template", "metadata", "annotations", "kubectl.kubernetes.io/restartedAt")
+    r'\.metadata\.generation',
+    r'.*\.annotations\["kubectl\.kubernetes\.io/last-applied-configuration"\]',
+    r'.*\.annotations\["kubectl\.kubernetes\.io/restartedAt"\]'
 )
 MATTERMOST_HOOK_URL = getenv("MATTERMOST_HOOK_URL")
 
@@ -31,35 +29,54 @@ def get():
     return 200
 
 
-def delete_key(dict_or_dicts, path, *paths_left):
-    if isinstance(dict_or_dicts, dict):
-        if path not in dict_or_dicts:
-            return False
-        if paths_left:
-            return delete_key(dict_or_dicts[path], *paths_left)
-        del dict_or_dicts[path]
-        return True
-    elif isinstance(dict_or_dicts, list):
-        result = True
-        for i, d in enumerate(dict_or_dicts):
-            result &= delete_key(d, path, *paths_left)
-        return result
-    return False
+def flatten(o):
+    """Flatten dicts and lists, recursively, JSON-style
+
+    It's a generator that yields key-value pairs.
+
+    Example:
+        >>> dict(flatten({"a": [{"b": 1}, [2, 3], 4, {"c.d": 5, True: 6}]}))
+        {'.a[0].b': 1,
+         '.a[1][0]': 2,
+         '.a[1][1]': 3,
+         '.a[2]': 4},
+         '.a[3]["c.d"]': 5,
+         '.a[3][true]': 6}
+    """
+    if isinstance(o, dict):
+        for key, value in o.items():
+            if isinstance(key, str) and "." in key:
+                key = '["{}"]'.format(key)
+            elif isinstance(key, str):
+                key = ".{}".format(key)
+            else:
+                key = '[{}]'.format(json.dumps(key))
+            for subkey, subvalue in flatten(value):
+                yield key + subkey, subvalue
+    elif isinstance(o, list):
+        for index, value in enumerate(o):
+            for subkey, subvalue in flatten(value):
+                yield "[{}]".format(index) + subkey, subvalue
+    else:
+        yield "", o
 
 
-def yaml_diff(d1, d2):
-    d1 = deepcopy(d1)
-    d2 = deepcopy(d2)
+def exclude_useless_paths(o):
+    for key, value in o:
+        for path in USELESS_PATHS:
+            if re.match(path, key):
+                break
+        else:
+            yield key, value
 
-    for d in d1, d2:
-        for paths in USELESS_PATHS:
-            delete_key(d, *paths)
 
-    yaml1 = yaml.dump(d1)
-    yaml2 = yaml.dump(d2)
-    diff = difflib.unified_diff(yaml1.splitlines(keepends=True),
-                                yaml2.splitlines(keepends=True),
-                                n=0)  # number of context lines
+def dump(o):
+    for key, value in exclude_useless_paths(flatten(o)):
+        yield "{}: {}\n".format(key, json.dumps(value))
+
+
+def get_diff(d1, d2):
+    diff = difflib.unified_diff(tuple(dump(d1)), tuple(dump(d2)), n=0)
     return "".join(list(diff)[2:])  # remove control and blank lines
 
 
@@ -102,10 +119,9 @@ def post():
         attachment["fields"].append(field)
 
     # Append diff of resource configuration for updates
-    # TODO: append only if yaml-diff annotation if specified
     if operation == "UPDATE":
-        diff = yaml_diff(review["request"]["oldObject"],
-                         review["request"]["object"])
+        diff = get_diff(review["request"]["oldObject"],
+                        review["request"]["object"])
         field = {"short": False,
                  "title": "YAML configuration diff",
                  "value": "```diff\n{}```".format(diff)}
