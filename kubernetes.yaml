@@ -71,6 +71,7 @@ metadata:
   namespace: default
 webhooks:
 - name: kubemen.numberly.com
+  failurePolicy: Ignore
   rules:
   - operations: ["CREATE", "UPDATE", "DELETE"]
     apiGroups: ["*"]
