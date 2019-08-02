@@ -72,6 +72,7 @@ metadata:
 webhooks:
 - name: kubemen.numberly.com
   failurePolicy: Ignore
+  sideEffects: Some
   rules:
   - operations: ["CREATE", "UPDATE", "DELETE"]
     apiGroups: ["*"]
