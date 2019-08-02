@@ -122,10 +122,11 @@ def post():
     if operation == "UPDATE":
         diff = get_diff(review["request"]["oldObject"],
                         review["request"]["object"])
-        field = {"short": False,
-                 "title": "YAML configuration diff",
-                 "value": "```diff\n{}```".format(diff)}
-        attachment["fields"].append(field)
+        if diff:
+            field = {"short": False,
+                     "title": "YAML configuration diff",
+                     "value": "```diff\n{}```".format(diff)}
+            attachment["fields"].append(field)
 
     # TODO: retrieve channel_id from annotation
     # TODO: change icon_url/username based on resource
