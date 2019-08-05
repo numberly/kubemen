@@ -1,5 +1,6 @@
 import json
 import random
+import re
 
 import requests
 from flask import current_app, request
@@ -31,15 +32,14 @@ def post():
     review = request.get_json(force=True)
     review.update(response={"uid": review["request"]["uid"], "allowed": True})
 
-    # Skip alerting and allow admission request if the operation was not manual
+    # Validate the username against the regexp and format it
+    username_regexp = current_app.config.get("USERNAME_REGEXP")
+    username_format = current_app.config.get("USERNAME_FORMAT")
     username = review["request"]["userInfo"]["username"]
-    service_accounts_prefix = current_app.config.get("SERVICE_ACCOUNTS_PREFIX")
-    if service_accounts_prefix and service_accounts_prefix in username:
+    match = re.match(username_regexp, username)
+    if not match:
         return review
-    usernames_domain = current_app.config.get("USERNAMES_DOMAIN")
-    if usernames_domain and usernames_domain not in username:
-        username = username.split("@")[0]
-        return review
+    username = username_format.format(*match.groups())
 
     operation = review["request"]["operation"]
     if operation == "DELETE":

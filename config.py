@@ -17,8 +17,12 @@ MATTERMOST_HOOK_URL = ""
 MATTERMOST_TEXT_MESSAGE_FORMAT = "{emoji} | {hashtag} | **{namespace}** | {kind} **{name}** *{operation}d* by `{username}`"
 ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/icons/{}.png"
 
-SERVICE_ACCOUNTS_PREFIX = "serviceaccount:"
-USERNAMES_DOMAIN = "@numberly.com"
+USERNAME_FORMAT = "{0}"
+USERNAME_REGEXP = r"(.*)@.*"
+
+# Example: keep everything, not just the first part of an email.
+# Be cautious though, this will allow serviceaccounts.
+# USERNAMES_REGEX = r"(.*)"
 
 USELESS_DIFF_PATHS = (
     r'\.metadata\.generation',
