@@ -1,2 +1,2 @@
-flask-stupe
-requests
+Flask-Stupe==3.7.1
+requests==2.22.0
