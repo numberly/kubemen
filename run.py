@@ -22,21 +22,16 @@ USELESS_PATHS = (
     r'.*\.annotations\["kubectl\.kubernetes\.io/restartedAt"\]'
 )
 MATTERMOST_HOOK_URL = getenv("MATTERMOST_HOOK_URL")
-# TODO: nice icons
-WATCHMEN_MEMBERS = [
-    {"username": "Doctor Manhattan",
-     "icon_url": ""},
-    {"username": "Nite Owl",
-     "icon_url": ""},
-    {"username": "Ozymandias",
-     "icon_url": ""},
-    {"username": "Rorschach",
-     "icon_url": ""},
-    {"username": "Silk Spectre",
-     "icon_url": ""},
-    {"username": "The Comedian",
-     "icon_url": ""}
-]
+ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/icons/{}.png"
+WATCHMEN_MEMBERS = [{"username": "Doctor Manhattan"},
+                    {"username": "Nite Owl"},
+                    {"username": "Ozymandias"},
+                    {"username": "Rorschach"},
+                    {"username": "Silk Spectre"},
+                    {"username": "The Comedian"}]
+for member in WATCHMEN_MEMBERS:
+    name = member["username"].lower().replace(" ", "_")
+    member["icon_url"] = ICONS_BASE_URL.format(name)
 
 
 @app.route("/", methods=["GET"])
