@@ -25,7 +25,6 @@ def get():
     return 200
 
 
-# TODO: validate admission review schema
 @app.route("/", methods=["POST"])
 def post():
     """TODO: write docstring"""
