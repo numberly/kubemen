@@ -45,12 +45,13 @@ def post():
     operation = review["request"]["operation"]
     if operation == "DELETE":
         hashtag = "#unrelease"
-        kind = review["request"]["oldObject"]["kind"]
-        name = review["request"]["oldObject"]["metadata"]["name"]
+        object = review["request"]["oldObject"]
     else:
         hashtag = "#release"
-        kind = review["request"]["object"]["kind"]
-        name = review["request"]["object"]["metadata"]["name"]
+        object = review["request"]["object"]
+
+    kind = object["kind"]
+    name = object["metadata"]["name"]
     namespace = review["request"]["namespace"]
 
     color = ATTACHMENTS_STYLE[operation]["color"]
@@ -62,14 +63,19 @@ def post():
     attachment = {"color": color, "fields": []}
 
     # Append list of images to message for a Deployment update
-    if kind == "Deployment" and operation != "DELETE":
+    if (kind == "Deployment" and operation != "DELETE"
+        and "spec" in object and "template" in object["spec"]
+        and "spec" in object["spec"]["template"]
+        and "containers" in object["spec"]["template"]["spec"]
+        and object["spec"]["template"]["spec"]["containers"]):
         field = {"short": False,
                  "title": "Images",
                  "value": ""}
-        spec = review["request"]["object"]["spec"]["template"]["spec"]
-        for container in spec["containers"]:
-            field["value"] += "- `{}`\n".format(container["image"])
-        attachment["fields"].append(field)
+        for container in object["spec"]["template"]["spec"]["containers"]:
+            if "image" in container:
+                field["value"] += "- `{}`\n".format(container["image"])
+        if field["value"]:
+            attachment["fields"].append(field)
 
     # Append diff of resource configuration for updates
     if operation == "UPDATE":
