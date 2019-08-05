@@ -38,7 +38,8 @@ def post():
     if service_accounts_prefix and service_accounts_prefix in username:
         return review
     usernames_domain = current_app.config.get("USERNAMES_DOMAIN")
-    if usernames_domain not in username:
+    if usernames_domain and usernames_domain not in username:
+        username = username.split("@")[0]
         return review
 
     operation = review["request"]["operation"]
@@ -57,7 +58,7 @@ def post():
     text = current_app.config.get("MATTERMOST_TEXT_MESSAGE_FORMAT")
     text = text.format(emoji=emoji, hashtag=hashtag, namespace=namespace,
                        kind=kind, name=name, operation=operation.lower(),
-                       username=username.split("@")[0])
+                       username=username)
     attachment = {"color": color, "fields": []}
 
     # Append list of images to message for a Deployment update
