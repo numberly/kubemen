@@ -34,6 +34,9 @@ def post():
 
     # Skip alerting and allow admission request if the operation was not manual
     username = review["request"]["userInfo"]["username"]
+    service_accounts_prefix = current_app.config.get("SERVICE_ACCOUNTS_PREFIX")
+    if service_accounts_prefix and service_accounts_prefix in username:
+        return review
     usernames_domain = current_app.config.get("USERNAMES_DOMAIN")
     if usernames_domain not in username:
         return review

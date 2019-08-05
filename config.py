@@ -17,6 +17,7 @@ MATTERMOST_HOOK_URL = ""
 MATTERMOST_TEXT_MESSAGE_FORMAT = "{emoji} | {hashtag} | **{namespace}** | {kind} **{name}** *{operation}d* by `{username}`"
 ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/icons/{}.png"
 
+SERVICE_ACCOUNTS_PREFIX = "serviceaccount:"
 USERNAMES_DOMAIN = "@numberly.com"
 
 USELESS_DIFF_PATHS = (
