@@ -1,7 +1,5 @@
 import json
 
-import requests
-
 
 def test_get(client):
     response = client.get("/")
