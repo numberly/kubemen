@@ -1,1 +1,64 @@
-.venv/
+*.py[cod]
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+__pycache__
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+pytestdebug.log
+.cache/
+htmlcov/
+.pytest_cache/
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+.ropeproject/
+
+# Vim / Emacs
+*.s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+*\#*
+
+# SublimeText
+*.sublime-workspace
+
+# PyCharm
+.idea
+.iml
+
+# virtualenv
+.venv*
+src/
+
+# Sphinx
+docs/build
+docs/config.py
+docs/sources/README.rst
