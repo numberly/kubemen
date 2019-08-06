@@ -123,6 +123,36 @@ def test_post_update(client):
 
 
 # TODO: test message content
+def test_post_reloaded(client):
+    payload = {
+        "kind": "AdmissionReview",
+        "request": {
+            "namespace": "magrathea",
+            "object": {
+                "kind": "Deployment",
+                "metadata": {
+                    "name": "the-answer-to-the-ultimate-question"
+                }
+            },
+            "oldObject": {
+                "kind": "Deployment",
+                "metadata": {
+                    "name": "the-answer-to-the-ultimate-question"
+                }
+            },
+            "operation": "UPDATE",
+            "uid": "121593ce-bb88-4c69-1fa2-c4ea619cfa4c",
+            "userInfo": {"username": "deep_thought@numberly.com"}
+        }
+    }
+    response = client.post("/", data=json.dumps(payload))
+    assert response.status_code == 200
+    data = response.get_json()["data"]
+    assert data["response"]["uid"] == payload["request"]["uid"]
+    assert data["response"]["allowed"] is True
+
+
+# TODO: test message content
 def test_post_delete(client):
     payload = {
         "kind": "AdmissionReview",
