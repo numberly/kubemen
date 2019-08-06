@@ -1,23 +1,12 @@
-import json
-import random
 import re
 
-import requests
 from flask import current_app, request
 from flask_stupe.json import Stupeflask
 
+from kubemen.connectors import send_mattermost_message
 from kubemen.diff import get_diff
 
 app = Stupeflask("kubemen")
-
-
-ATTACHMENTS_STYLE = {
-    "CREATE": {"color": "#228b22", "emoji": ":rocket:"},
-    "UPDATE": {"color": "#1e90ff", "emoji": ":recycle:"},
-    "DELETE": {"color": "#dc143c", "emoji": ":x:"}
-}
-WATCHMEN_MEMBERS = ["Doctor Manhattan", "Nite Owl", "Ozymandias",
-                    "Rorschach", "Silk Spectre", "The Comedian"]
 
 
 @app.route("/", methods=["GET"])
@@ -70,65 +59,30 @@ def post():
     else:
         hashtag = "#release"
         object = review["request"]["object"]
-
     kind = object["kind"]
     name = object["metadata"]["name"]
     namespace = review["request"]["namespace"]
 
-    color = ATTACHMENTS_STYLE[operation]["color"]
-    emoji = ATTACHMENTS_STYLE[operation]["emoji"]
-    text = current_app.config.get("MATTERMOST_TEXT_MESSAGE_FORMAT")
-    text = text.format(emoji=emoji, hashtag=hashtag, namespace=namespace,
-                       kind=kind, name=name, operation=operation.lower(),
-                       username=username)
-    attachment = {"color": color, "fields": []}
-
-    # Append list of images to message for a Deployment update
+    # Extract list of images for a Deployment creation or update
+    images = []
     if (kind == "Deployment" and operation != "DELETE"
         and "spec" in object and "template" in object["spec"]
         and "spec" in object["spec"]["template"]
         and "containers" in object["spec"]["template"]["spec"]
         and object["spec"]["template"]["spec"]["containers"]):
-        field = {"short": False,
-                 "title": "Images",
-                 "value": ""}
         for container in object["spec"]["template"]["spec"]["containers"]:
-            if "image" in container:
-                field["value"] += "- `{}`\n".format(container["image"])
-        if field["value"]:
-            attachment["fields"].append(field)
+            images.append(container["image"])
 
-    # Append diff of resource configuration for updates
+    # Generate diff of resource configuration for updates
+    diff = None
     if operation == "UPDATE":
         diff = get_diff(review["request"]["oldObject"],
                         review["request"]["object"])
-        if diff:
-            field = {"short": False,
-                     "title": "YAML configuration diff",
-                     "value": "```diff\n{}```".format(diff)}
-            attachment["fields"].append(field)
-        elif kind == "Deployment":
-            text = text.replace("updated", "reloaded")
 
-    # TODO: retrieve channel_id from annotation
-    message = {"channel_id": "bot", "text": text}
-
-    # Randomly select a Watchmen member as notifier
-    username = random.choice(WATCHMEN_MEMBERS)
-    filename = username.lower().replace(" ", "_")
-    icons_base_url = current_app.config.get("ICONS_BASE_URL")
-    icon_url = icons_base_url.format(filename)
-    message.update(username=username, icon_url=icon_url)
-
-    # Update attachment with thumb_url and append it to message
-    if attachment["fields"]:
-        thumb_url = icons_base_url.format("kubemen")
-        attachment.update(thumb_url=thumb_url)
-        message.update({"attachments": [attachment]})
-
-    # Send Mattermost notification and allow admission request
-    mattermost_hook_url = current_app.config.get("MATTERMOST_HOOK_URL")
-    requests.post(mattermost_hook_url, data=json.dumps(message))
+    # TODO: make it possible to choose the connector
+    fancyness_level = current_app.config.get("FANCYNESS_LEVEL", 2)
+    send_mattermost_message(operation, hashtag, namespace, kind, name,
+                            username, images, diff, fancyness_level)
     return review
 
 

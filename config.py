@@ -13,10 +13,6 @@ APP_HOST = "0.0.0.0"
 APP_PORT = 8080
 APP_DEBUG = True
 
-MATTERMOST_HOOK_URL = ""
-MATTERMOST_TEXT_MESSAGE_FORMAT = "{emoji} | {hashtag} | **{namespace}** | {kind} **{name}** *{operation}d* by `{username}`"
-ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/icons/{}.png"
-
 USERNAME_FORMAT = "{0}"
 USERNAME_REGEXP = r"(.*)@.*"
 
@@ -29,3 +25,9 @@ USELESS_DIFF_PATHS = (
     r'.*\.annotations\["kubectl\.kubernetes\.io/last-applied-configuration"\]',
     r'.*\.annotations\["kubectl\.kubernetes\.io/restartedAt"\]'
 )
+
+FANCYNESS_LEVEL = 2
+ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/icons/{}.png"
+
+MATTERMOST_HOOK_URL = ""
+MATTERMOST_TEXT_MESSAGE_FORMAT = "{emoji} | {hashtag} | **{namespace}** | {kind} **{name}** *{operation}d* by `{username}`"
