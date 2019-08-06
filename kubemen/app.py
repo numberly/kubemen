@@ -85,6 +85,8 @@ def post():
                      "title": "YAML configuration diff",
                      "value": "```diff\n{}```".format(diff)}
             attachment["fields"].append(field)
+        elif kind == "Deployment":
+            text = text.replace("updated", "reloaded")
 
     # TODO: retrieve channel_id from annotation
     message = {"channel_id": "bot", "text": text}
