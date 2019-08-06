@@ -28,7 +28,29 @@ def get():
 
 @app.route("/", methods=["POST"])
 def post():
-    """TODO: write docstring"""
+    """Extract AdmissionReview data to post it as a message.
+
+    Extract useful information from an AdmissionReview object to post it as a
+    message on the chosen platform.
+
+    This function will always allow all requests by default in order to be as
+    transparent as possible for the cluster.
+
+    It will also skip the notification part if the username that modified the
+    resource is not desired.
+
+    The message format is configurable.
+    A Deployment modification will always list the images it uses.
+    An UPDATE will always output the configuration diff as a full YAML path.
+    # TODO: annotation toggle diff
+
+    The effort put into styling the message can also be configured.
+
+    **Payload**: A complete
+    `AdmissionReview object<https://nubr.ly/k8sAdmissionReview>`_ object.
+
+    :status 200: AdmissionReview request allowed.
+    """
     review = request.get_json(force=True)
     review.update(response={"uid": review["request"]["uid"], "allowed": True})
 
