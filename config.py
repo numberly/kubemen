@@ -30,4 +30,4 @@ FANCYNESS_LEVEL = 2
 ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/icons/{}.png"
 
 MATTERMOST_HOOK_URL = ""
-MATTERMOST_TEXT_MESSAGE_FORMAT = "{emoji} | {hashtag} | **{namespace}** | {kind} **{name}** *{operation}d* by `{username}`"
+MATTERMOST_TEXT_MESSAGE_FORMAT = "{emoji} **{operation}** of `{kind}` **{name}** by `{username}` in `{namespace}` {hashtag}"
