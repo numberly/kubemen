@@ -1,9 +1,9 @@
-Welcome to Kubemen's documentation
-##################################
+.. include:: ../../README.rst
+
+Documentation
+=============
 
 .. toctree::
-    :maxdepth: 2
-    :caption: Contents:
+   :maxdepth: 2
 
-    README
-    endpoints
+   endpoints

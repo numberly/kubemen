@@ -60,5 +60,3 @@ src/
 
 # Sphinx
 docs/build
-docs/config.py
-docs/sources/README.rst

@@ -2,11 +2,10 @@ Endpoints
 #########
 
 .. qrefflask:: kubemen.app:app
-    :undoc-static:
-    :autoquickref:
+   :undoc-static:
+   :autoquickref:
 
-Kubemen
-=======
+|
 
 .. autoflask:: kubemen.app:app
-    :modules: kubemen.views.kubemen
+   :modules: kubemen.app

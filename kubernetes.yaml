@@ -1,11 +1,17 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubemen
+
+---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: kubemen
   labels:
     app: kubemen
-  namespace: default
+  namespace: kubemen
 rules:
 - apiGroups: ["*"]
   resources: [
@@ -42,7 +48,7 @@ metadata:
   name: kubemen
   labels:
     app: kubemen
-  namespace: default
+  namespace: kubemen
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -51,7 +57,7 @@ metadata:
   name: kubemen
   labels:
     app: kubemen
-  namespace: default
+  namespace: kubemen
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -59,7 +65,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: kubemen
-    namespace: default
+    namespace: kubemen
 
 ---
 apiVersion: admissionregistration.k8s.io/v1beta1
@@ -68,9 +74,9 @@ metadata:
   name: kubemen
   labels:
     app: kubemen
-  namespace: default
+  namespace: kubemen
 webhooks:
-- name: kubemen.numberly.com
+- name: kubemen.kubemen.svc
   failurePolicy: Ignore
   sideEffects: Some
   rules:
@@ -104,7 +110,10 @@ webhooks:
     ]
     scope: "Namespaced"
   clientConfig:
-    url: "https://kubemen.numberly.com"
+    service:
+      name: kubemen
+      namespace: kubemen
+      path: "/"
   admissionReviewVersions:
   - v1beta1
   timeoutSeconds: 1
@@ -116,7 +125,7 @@ metadata:
   name: kubemen
   labels:
     app: kubemen
-  namespace: default
+  namespace: kubemen
 spec:
   selector:
     matchLabels:
@@ -162,7 +171,7 @@ metadata:
   name: kubemen
   labels:
     app: kubemen
-  namespace: default
+  namespace: kubemen
 spec:
   type: ClusterIP
   selector:
@@ -171,27 +180,3 @@ spec:
   - port: 80
     protocol: TCP
     targetPort: 8000
-
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: kubemen
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    kubernetes.io/ingress.class: "nginx"
-  labels:
-    app: kubemen
-  namespace: default
-spec:
-  rules:
-  - host: kubemen.numberly.com
-    http:
-      paths:
-      - backend:
-          serviceName: kubemen
-          servicePort: 80
-  tls:
-  - hosts:
-    - kubemen.numberly.com
-    secretName: tls-kubemen
