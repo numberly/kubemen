@@ -38,41 +38,53 @@ Installation
 Kubernetes
 ----------
 
+Requirements:
+
+* RBAC being enabled on your cluster
+* the ValidatingAdmissionWebhook admission controller being enabled too
+* you being an administrator of the cluster
+
+If these requirements are fulfilled, installing Kubemen on your cluster is
+pretty straightforward:
+
+* setup the namespace and RBAC stuff with:
+
 .. code-block:: bash
 
-    $ kubectl apply -f https://raw.githubusercontent.com/numberly/kubemen/master/kubernetes.yaml
+    $ kubectl apply -f deploy/configuration.yaml
 
-Docker
-------
+* create TLS certificates for the service and sign them through the CSR API:
 
 .. code-block:: bash
 
-    $
+    $ sh deploy/create-cert.sh
+
+* deploy Kubemen:
+
+.. code-block:: bash
+
+    $ cat deploy/kubemen.yaml | sh deploy/patch-ca-bundle.sh | kubectl apply -f -
+
 
 Locally
 -------
 
-1. clone this git repository
+If you want to hack on Kubemen:
 
-.. code-block:: bash
-
-    $ git clone git@github.com:numberly/kubemen kubemen
-    $ cd kubemen
-
-2. create and activate a virtualenv_
+* create and activate a virtualenv_:
 
 .. code-block:: bash
 
     $ virtualenv -ppython3 .venv
     $ .venv/bin/activate
 
-3. install the application requirements with pip_
+* install the application requirements with pip_:
 
 .. code-block:: bash
 
     (.venv) $ pip install -r requirements.txt
 
-You should now be able to run it with:
+* run it with:
 
 .. code-block:: bash
 
