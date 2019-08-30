@@ -7,6 +7,7 @@ from kubemen.connectors import send_mattermost_message
 from kubemen.diff import get_diff
 
 app = Stupeflask("kubemen")
+app.config["METADATA_WRAPPING"] = False
 
 
 @app.route("/", methods=["GET"])

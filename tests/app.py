@@ -24,7 +24,7 @@ def test_post_skip_alerting_service_account(client):
     }
     response = client.post("/", data=json.dumps(payload))
     assert response.status_code == 200
-    data = response.get_json()["data"]
+    data = response.get_json()
     assert data["response"]["uid"] == payload["request"]["uid"]
     assert data["response"]["allowed"] is True
 
@@ -47,7 +47,7 @@ def test_post_skip_alerting_no_domain(client):
     }
     response = client.post("/", data=json.dumps(payload))
     assert response.status_code == 200
-    data = response.get_json()["data"]
+    data = response.get_json()
     assert data["response"]["uid"] == payload["request"]["uid"]
     assert data["response"]["allowed"] is True
 
@@ -78,7 +78,7 @@ def test_post_create_deployment(client):
     }
     response = client.post("/", data=json.dumps(payload))
     assert response.status_code == 200
-    data = response.get_json()["data"]
+    data = response.get_json()
     assert data["response"]["uid"] == payload["request"]["uid"]
     assert data["response"]["allowed"] is True
     # requests.post.assert_called_once_with(data={"channel_id": "bot"})
@@ -117,7 +117,7 @@ def test_post_update(client):
     }
     response = client.post("/", data=json.dumps(payload))
     assert response.status_code == 200
-    data = response.get_json()["data"]
+    data = response.get_json()
     assert data["response"]["uid"] == payload["request"]["uid"]
     assert data["response"]["allowed"] is True
 
@@ -147,7 +147,7 @@ def test_post_reloaded(client):
     }
     response = client.post("/", data=json.dumps(payload))
     assert response.status_code == 200
-    data = response.get_json()["data"]
+    data = response.get_json()
     assert data["response"]["uid"] == payload["request"]["uid"]
     assert data["response"]["allowed"] is True
 
@@ -171,6 +171,6 @@ def test_post_delete(client):
     }
     response = client.post("/", data=json.dumps(payload))
     assert response.status_code == 200
-    data = response.get_json()["data"]
+    data = response.get_json()
     assert data["response"]["uid"] == payload["request"]["uid"]
     assert data["response"]["allowed"] is True

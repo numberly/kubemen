@@ -1,2 +1,2 @@
-Flask-Stupe==3.7.1
+Flask-Stupe==4.1.2
 requests==2.22.0
