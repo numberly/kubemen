@@ -26,9 +26,8 @@ def kubemen():
     All review requests are allowed in order to be as transparent as
     possible for the cluster.
 
-    :json: A complete `AdmissionReview object`_.
-
-    .. _`AdmissionReview object`: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response
+    :json: A complete `AdmissionReview object
+           <https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response>`_
     """
     review = request.get_json(force=True)
     review.update(response={"uid": review["request"]["uid"], "allowed": True})
