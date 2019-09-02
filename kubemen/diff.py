@@ -53,7 +53,7 @@ def dump(o, useless_paths):
 
 
 def get_diff(d1, d2):
-    useless_paths = current_app.config.get("USELESS_DIFF_PATHS")
+    useless_paths = current_app.config.get("USELESS_DIFF_PATHS_REGEXPS")
     diff = difflib.unified_diff(tuple(dump(d1, useless_paths)),
                                 tuple(dump(d2, useless_paths)), n=0)
     return "".join(list(diff)[2:])  # remove control and blank lines

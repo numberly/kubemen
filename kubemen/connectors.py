@@ -1,5 +1,6 @@
 import json
 import random
+import urllib.parse
 
 import requests
 from flask import current_app
@@ -42,13 +43,13 @@ def send_mattermost_message(operation, hashtag, namespace, kind, name,
         message.update({"attachments": [attachment]})
     icons_base_url = current_app.config.get("ICONS_BASE_URL")
     if fancyness_level > 0 and fields:
-        thumb_url = icons_base_url.format("kubemen")
+        thumb_url = urllib.parse.urljoin(icons_base_url, "kubemen.png")
         message["attachments"][0].update(thumb_url=thumb_url)
     if fancyness_level > 1:  # TODO: test fancyness
         # Randomly select a Watchmen member as notifier
         bot_username = random.choice(WATCHMEN_MEMBERS)
-        icon_filename = bot_username.lower().replace(" ", "_")
-        icon_url = icons_base_url.format(icon_filename)
+        icon_filename = bot_username.lower().replace(" ", "_") + ".png"
+        icon_url = urllib.parse.urljoin(icons_base_url, icon_filename)
         message.update(username=bot_username, icon_url=icon_url)
 
     mattermost_hook_url = current_app.config.get("MATTERMOST_HOOK_URL")
