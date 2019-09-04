@@ -65,8 +65,10 @@ def kubemen():
     # Generate diff of resource configuration for updates
     diff = None
     if operation == "UPDATE":
+        useless_paths = current_app.config.get("USELESS_DIFF_PATHS_REGEXPS")
         diff = get_diff(review["request"]["oldObject"],
-                        review["request"]["object"])
+                        review["request"]["object"],
+                        useless_paths)
 
     # TODO: make it possible to choose the connector
     fancyness_level = current_app.config.get("FANCYNESS_LEVEL", 2)
