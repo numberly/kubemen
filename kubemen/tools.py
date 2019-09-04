@@ -36,6 +36,8 @@ def flatten(o):
 
 
 def exclude_useless_paths(o, useless_paths):
+    if useless_paths is None:
+        useless_paths = []
     for key, value in o:
         for path in useless_paths:
             if re.match(path, key):
@@ -44,15 +46,13 @@ def exclude_useless_paths(o, useless_paths):
             yield key, value
 
 
-def dump(o, useless_paths):
+def dump(o, useless_paths=None):
     for key, value in exclude_useless_paths(flatten(o),
                                             useless_paths):
         yield "{}: {}\n".format(key, json.dumps(value))
 
 
 def get_diff(d1, d2, useless_paths=None):
-    if useless_paths is None:
-        useless_paths = []
     diff = difflib.unified_diff(tuple(dump(d1, useless_paths)),
                                 tuple(dump(d2, useless_paths)), n=0)
     return "".join(list(diff)[2:])  # remove control and blank lines
