@@ -4,7 +4,7 @@ from flask import current_app, request
 from flask_stupe.json import Stupeflask
 
 from kubemen.connectors import send_mattermost_message
-from kubemen.diff import get_diff
+from kubemen.tools import get_diff
 
 app = Stupeflask("kubemen")
 app.config["METADATA_WRAPPING"] = False
