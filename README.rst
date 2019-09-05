@@ -21,7 +21,7 @@
 *They watch on your Kubernetes cluster…*
 
 Kubemen is a `Kubernetes validating admission webhook`_ that sends
-notifications when a resource change on your cluster, heavily influenced by the
+notifications when a resource changes on your cluster, heavily influenced by the
 *Watchmen (2009)* movie.
 
 Currently supported channels:
@@ -97,7 +97,7 @@ Tests
 To run Kubemen tests:
 
 * install Kubemen locally (see above);
-* install developers requirements with ``pip install -r requirements.txt``;
+* install developers requirements with ``pip install -r dev-requirements.txt``;
 * run ``pytest``.
 
 
