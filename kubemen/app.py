@@ -1,9 +1,10 @@
+import importlib
+import logging
 import re
 
 from flask import current_app, request
 from flask_stupe.json import Stupeflask
 
-from kubemen.connectors import send_mattermost_message
 from kubemen.tools import get_diff
 
 app = Stupeflask("kubemen")
@@ -70,10 +71,21 @@ def kubemen():
                         review["request"]["object"],
                         useless_paths)
 
-    # TODO: make it possible to choose the connector
     fancyness_level = current_app.config.get("FANCYNESS_LEVEL", 2)
-    send_mattermost_message(operation, hashtag, namespace, kind, name,
-                            username, images, diff, fancyness_level)
+    icons_base_url = current_app.config.get("ICONS_BASE_URL", "")
+
+    # Dispatch to connectors
+    for connector in current_app.config.get("ENABLED_CONNECTORS"):
+        module_name = "kubemen.connectors.{}".format(connector)
+        module = importlib.import_module(module_name)
+        if not hasattr(module, "send"):
+            logging.warning("Invalid connector: {}".format(connector))
+        else:
+            config_namespace = connector.upper() + "_"
+            config = current_app.config.get_namespace(config_namespace)
+            module.send(operation, hashtag, namespace, kind, name, username,
+                        images, diff, fancyness_level, icons_base_url,
+                        **config)
     return review
 
 

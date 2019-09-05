@@ -3,7 +3,6 @@ import random
 import urllib.parse
 
 import requests
-from flask import current_app
 
 MESSAGE_STYLE = {
     "CREATE": {"color": "#228b22", "emoji": ":rocket:"},
@@ -15,8 +14,8 @@ WATCHMEN_MEMBERS = ["Doctor Manhattan", "Nite Owl", "Ozymandias",
                     "Rorschach", "Silk Spectre", "The Comedian"]
 
 
-def send_mattermost_message(operation, hashtag, namespace, kind, name,
-                            username, images, diff, fancyness_level):
+def send(operation, hashtag, namespace, kind, name, username, images, diff,
+         fancyness_level, icons_base_url, *, text_message_format, hook_url):
     fields = []
     if images:
         value = ""
@@ -30,10 +29,10 @@ def send_mattermost_message(operation, hashtag, namespace, kind, name,
         operation = "RELOAD"
 
     emoji = MESSAGE_STYLE[operation]["emoji"]
-    text = current_app.config.get("MATTERMOST_TEXT_MESSAGE_FORMAT")
-    text = text.format(emoji=emoji, hashtag=hashtag, namespace=namespace,
-                       kind=kind, name=name, operation=operation,
-                       username=username)
+    text = text_message_format.format(emoji=emoji, hashtag=hashtag,
+                                      namespace=namespace, kind=kind,
+                                      name=name, operation=operation,
+                                      username=username)
 
     # TODO: retrieve channel_id from annotation
     message = {"channel_id": "bot", "text": text}
@@ -41,7 +40,7 @@ def send_mattermost_message(operation, hashtag, namespace, kind, name,
         color = MESSAGE_STYLE[operation]["color"]
         attachment = {"color": color, "fields": fields}
         message.update({"attachments": [attachment]})
-    icons_base_url = current_app.config.get("ICONS_BASE_URL")
+
     if fancyness_level > 0 and fields:
         thumb_url = urllib.parse.urljoin(icons_base_url, "kubemen.png")
         message["attachments"][0].update(thumb_url=thumb_url)
@@ -52,5 +51,4 @@ def send_mattermost_message(operation, hashtag, namespace, kind, name,
         icon_url = urllib.parse.urljoin(icons_base_url, icon_filename)
         message.update(username=bot_username, icon_url=icon_url)
 
-    mattermost_hook_url = current_app.config.get("MATTERMOST_HOOK_URL")
-    requests.post(mattermost_hook_url, data=json.dumps(message))
+    requests.post(hook_url, data=json.dumps(message))

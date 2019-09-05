@@ -44,7 +44,11 @@ FANCYNESS_LEVEL = 2
 # A base URL where the icons of Watchmen can be fetched
 ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/artwork/icons/"
 
+ENABLED_CONNECTORS = (
+    "mattermost",
+    "email"
+)
+
 # Mattermost connector
-MATTERMOST_ENABLE = True
 MATTERMOST_HOOK_URL = ""
 MATTERMOST_TEXT_MESSAGE_FORMAT = "{emoji} **{operation}** of `{kind}` **{name}** by `{username}` in `{namespace}` {hashtag}"
