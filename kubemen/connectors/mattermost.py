@@ -1,5 +1,5 @@
 import json
-import urllib.parse
+from urllib.parse import urljoin
 
 import requests
 
@@ -11,42 +11,39 @@ MESSAGE_STYLE = {
 }
 
 
-def send(operation, namespace, kind, name, username, images, diff,
-         fancyness_level, character, icons_base_url, text_message_format,
-         hook_url):
+def send(change, character, user, *, fancyness_level, hook_url, icons_base_url,
+         text_message_format, **_):
     fields = []
-    if images:
+    if change.images:
         value = ""
-        for image in images:
+        for image in change.images:
             value += "- `{}`\n".format(image)
         fields.append({"title": "Images", "value": value})
-    if diff:
+    if change.diff:
         fields.append({"title": "YAML configuration diff",
-                       "value": "```diff\n{}```".format(diff)})
-    elif kind == "Deployment" and operation == "UPDATE":
-        operation = "RELOAD"
+                       "value": "```diff\n{}```".format(change.diff)})
 
-    hashtag = "#unrelease" if operation == "DELETE" else "#release"
-    emoji = MESSAGE_STYLE[operation]["emoji"]
+    hashtag = "#unrelease" if change.operation == "DELETE" else "#release"
+    emoji = MESSAGE_STYLE[change.operation]["emoji"]
     text = text_message_format.format(emoji=emoji, hashtag=hashtag,
-                                      namespace=namespace, kind=kind,
-                                      name=name, operation=operation,
-                                      username=username)
+                                      namespace=change.namespace,
+                                      kind=change.kind, name=change.name,
+                                      operation=change.operation,
+                                      username=user.formatted_name)
 
     # TODO: retrieve channel_id from annotation
     message = {"channel_id": "bot", "text": text}
     if fields:
-        color = MESSAGE_STYLE[operation]["color"]
+        color = MESSAGE_STYLE[change.operation]["color"]
         attachment = {"color": color, "fields": fields}
         message.update({"attachments": [attachment]})
 
     if fancyness_level > 0 and fields:
-        thumb_url = urllib.parse.urljoin(icons_base_url, "kubemen.png")
+        thumb_url = urljoin(icons_base_url, "kubemen.png")
         message["attachments"][0].update(thumb_url=thumb_url)
     if fancyness_level > 1:  # TODO: test fancyness
         # Randomly select a Watchmen member as notifier
-        icon_filename = character.lower().replace(" ", "_") + ".png"
-        icon_url = urllib.parse.urljoin(icons_base_url, icon_filename)
-        message.update(username=character, icon_url=icon_url)
+        icon_url = urljoin(icons_base_url, character.icon_filename)
+        message.update(username=character.name, icon_url=icon_url)
 
     requests.post(hook_url, data=json.dumps(message))

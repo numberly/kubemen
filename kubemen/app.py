@@ -6,10 +6,10 @@ import re
 from flask import current_app, request
 from flask_stupe.json import Stupeflask
 
-from kubemen.tools import get_diff
+from kubemen.models import Change, Character, User
 
-CHARACTERS = ["Doctor Manhattan", "Nite Owl", "Ozymandias", "Rorschach",
-              "Silk Spectre", "The Comedian"]
+CHARACTER_NAMES = ["Doctor Manhattan", "Nite Owl", "Ozymandias", "Rorschach",
+                   "Silk Spectre", "The Comedian"]
 
 app = Stupeflask("kubemen")
 app.config["METADATA_WRAPPING"] = False
@@ -37,42 +37,25 @@ def kubemen():
     review = request.get_json(force=True)
     review.update(response={"uid": review["request"]["uid"], "allowed": True})
 
-    # Validate the username against the regexp and format it
     username_regexp = current_app.config.get("USERNAME_REGEXP")
     username_format = current_app.config.get("USERNAME_FORMAT")
     username = review["request"]["userInfo"]["username"]
     match = re.match(username_regexp, username)
     if not match:
         return review
-    username = username_format.format(*match.groups())
+    formatted_username = username_format.format(*match.groups())
+    user = User(name=username, formatted_name=formatted_username)
 
-    operation = review["request"]["operation"]
-    if operation == "DELETE":
-        object = review["request"]["oldObject"]
-    else:
-        object = review["request"]["object"]
-    kind = object["kind"]
-    name = object["metadata"]["name"]
-    namespace = review["request"]["namespace"]
+    useless_paths = current_app.config.get("USELESS_DIFF_PATHS_REGEXPS")
+    change = Change(review=review, useless_paths=useless_paths)
 
-    # Extract a list of images (for Deployments and similar resources)
-    try:
-        images = [container["image"] for container
-                  in object["spec"]["template"]["spec"]["containers"]]
-    except KeyError:
-        images = []
+    character_name = random.choice(CHARACTER_NAMES)
+    character = Character(name=character_name)
 
-    # Generate diff of resource configuration for updates except for Secrets
-    diff = None
-    if operation == "UPDATE" and kind != "Secret":
-        useless_paths = current_app.config.get("USELESS_DIFF_PATHS_REGEXPS")
-        diff = get_diff(review["request"]["oldObject"],
-                        review["request"]["object"],
-                        useless_paths)
-
-    fancyness_level = current_app.config.get("FANCYNESS_LEVEL", 2)
-    character = random.choice(CHARACTERS)
-    icons_base_url = current_app.config.get("ICONS_BASE_URL", "")
+    global_config = {
+        "fancyness_level": current_app.config.get("FANCYNESS_LEVEL", 2),
+        "icons_base_url": current_app.config.get("ICONS_BASE_URL", "")
+    }
 
     # Dispatch to connectors
     for connector in current_app.config.get("ENABLED_CONNECTORS"):
@@ -81,11 +64,11 @@ def kubemen():
         if not hasattr(module, "send"):
             logging.warning("Invalid connector: {}".format(connector))
         else:
-            config_namespace = connector.upper() + "_"
-            config = current_app.config.get_namespace(config_namespace)
-            module.send(operation, namespace, kind, name, username, images,
-                        diff, fancyness_level, character, icons_base_url,
-                        **config)
+            namespace = connector.upper() + "_"
+            config = current_app.config.get_namespace(namespace)
+            for key, value in global_config.items():
+                config.setdefault(key, value)
+            module.send(change, character, user, **config)
     return review
 
 

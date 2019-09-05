@@ -1,6 +1,9 @@
+import random
+
 import pytest
 
-from kubemen.tools import dump, exclude_useless_paths, flatten, get_diff
+from kubemen.tools import (cached_property, dump, exclude_useless_paths,
+                            flatten, get_diff)
 
 
 def test_flatten():
@@ -46,3 +49,14 @@ def test_get_diff():
                     '@@ -6 +6 @@\n'
                     '-.a[3][true]: 6\n'
                     '+.a[3][true]: 7\n')
+
+
+def test_cached_property():
+    class Foo:
+        def randint(self):
+            return random.randint(0, 100)
+
+    foo = Foo()
+    assert foo.randint() != foo.randint()
+    foo.randint = cached_property(foo.randint)
+    assert foo.randint == foo.randint
