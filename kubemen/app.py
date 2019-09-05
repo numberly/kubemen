@@ -44,10 +44,8 @@ def kubemen():
 
     operation = review["request"]["operation"]
     if operation == "DELETE":
-        hashtag = "#unrelease"
         object = review["request"]["oldObject"]
     else:
-        hashtag = "#release"
         object = review["request"]["object"]
     kind = object["kind"]
     name = object["metadata"]["name"]
@@ -83,9 +81,8 @@ def kubemen():
         else:
             config_namespace = connector.upper() + "_"
             config = current_app.config.get_namespace(config_namespace)
-            module.send(operation, hashtag, namespace, kind, name, username,
-                        images, diff, fancyness_level, icons_base_url,
-                        **config)
+            module.send(operation, namespace, kind, name, username, images,
+                        diff, fancyness_level, icons_base_url, **config)
     return review
 
 

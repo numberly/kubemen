@@ -14,8 +14,8 @@ WATCHMEN_MEMBERS = ["Doctor Manhattan", "Nite Owl", "Ozymandias",
                     "Rorschach", "Silk Spectre", "The Comedian"]
 
 
-def send(operation, hashtag, namespace, kind, name, username, images, diff,
-         fancyness_level, icons_base_url, *, text_message_format, hook_url):
+def send(operation, namespace, kind, name, username, images, diff,
+         fancyness_level, icons_base_url, text_message_format, hook_url):
     fields = []
     if images:
         value = ""
@@ -28,6 +28,7 @@ def send(operation, hashtag, namespace, kind, name, username, images, diff,
     elif kind == "Deployment" and operation == "UPDATE":
         operation = "RELOAD"
 
+    hashtag = "#unrelease" if operation == "DELETE" else "#release"
     emoji = MESSAGE_STYLE[operation]["emoji"]
     text = text_message_format.format(emoji=emoji, hashtag=hashtag,
                                       namespace=namespace, kind=kind,
