@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/numberly/kubemen/master/logo.png
+.. image:: https://raw.githubusercontent.com/numberly/kubemen/master/artwork/logo.png
    :target: https://youtu.be/PVjA0y78_EQ
 
 |

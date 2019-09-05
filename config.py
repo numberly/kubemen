@@ -42,7 +42,7 @@ USELESS_DIFF_PATHS_REGEXPS = (
 FANCYNESS_LEVEL = 2
 
 # A base URL where the icons of Watchmen can be fetched
-ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/icons/"
+ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/artwork/icons/"
 
 # Mattermost connector
 MATTERMOST_ENABLE = True
