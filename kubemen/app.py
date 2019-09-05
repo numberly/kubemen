@@ -55,15 +55,12 @@ def kubemen():
     name = object["metadata"]["name"]
     namespace = review["request"]["namespace"]
 
-    # Extract list of images for a Deployment creation or update
-    images = []
-    if (kind == "Deployment" and operation != "DELETE"
-        and "spec" in object and "template" in object["spec"]
-        and "spec" in object["spec"]["template"]
-        and "containers" in object["spec"]["template"]["spec"]
-        and object["spec"]["template"]["spec"]["containers"]):
-        for container in object["spec"]["template"]["spec"]["containers"]:
-            images.append(container["image"])
+    # Extract a list of images (for Deployments and similar resources)
+    try:
+        images = [container["image"] for container
+                  in object["spec"]["template"]["spec"]["containers"]]
+    except KeyError:
+        images = []
 
     # Generate diff of resource configuration for updates except for Secrets
     diff = None
