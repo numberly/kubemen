@@ -1,5 +1,4 @@
 import json
-import random
 import urllib.parse
 
 import requests
@@ -10,12 +9,11 @@ MESSAGE_STYLE = {
     "RELOAD": {"color": "#ff8c00", "emoji": ":recycle:"},
     "DELETE": {"color": "#dc143c", "emoji": ":x:"}
 }
-WATCHMEN_MEMBERS = ["Doctor Manhattan", "Nite Owl", "Ozymandias",
-                    "Rorschach", "Silk Spectre", "The Comedian"]
 
 
 def send(operation, namespace, kind, name, username, images, diff,
-         fancyness_level, icons_base_url, text_message_format, hook_url):
+         fancyness_level, character, icons_base_url, text_message_format,
+         hook_url):
     fields = []
     if images:
         value = ""
@@ -47,9 +45,8 @@ def send(operation, namespace, kind, name, username, images, diff,
         message["attachments"][0].update(thumb_url=thumb_url)
     if fancyness_level > 1:  # TODO: test fancyness
         # Randomly select a Watchmen member as notifier
-        bot_username = random.choice(WATCHMEN_MEMBERS)
-        icon_filename = bot_username.lower().replace(" ", "_") + ".png"
+        icon_filename = character.lower().replace(" ", "_") + ".png"
         icon_url = urllib.parse.urljoin(icons_base_url, icon_filename)
-        message.update(username=bot_username, icon_url=icon_url)
+        message.update(username=character, icon_url=icon_url)
 
     requests.post(hook_url, data=json.dumps(message))

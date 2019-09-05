@@ -1,11 +1,15 @@
 import importlib
 import logging
+import random
 import re
 
 from flask import current_app, request
 from flask_stupe.json import Stupeflask
 
 from kubemen.tools import get_diff
+
+CHARACTERS = ["Doctor Manhattan", "Nite Owl", "Ozymandias", "Rorschach",
+              "Silk Spectre", "The Comedian"]
 
 app = Stupeflask("kubemen")
 app.config["METADATA_WRAPPING"] = False
@@ -70,6 +74,7 @@ def kubemen():
                         useless_paths)
 
     fancyness_level = current_app.config.get("FANCYNESS_LEVEL", 2)
+    character = random.choice(CHARACTERS)
     icons_base_url = current_app.config.get("ICONS_BASE_URL", "")
 
     # Dispatch to connectors
@@ -82,7 +87,8 @@ def kubemen():
             config_namespace = connector.upper() + "_"
             config = current_app.config.get_namespace(config_namespace)
             module.send(operation, namespace, kind, name, username, images,
-                        diff, fancyness_level, icons_base_url, **config)
+                        diff, fancyness_level, character, icons_base_url,
+                        **config)
     return review
 
 
