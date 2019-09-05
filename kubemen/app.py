@@ -62,9 +62,9 @@ def kubemen():
         for container in object["spec"]["template"]["spec"]["containers"]:
             images.append(container["image"])
 
-    # Generate diff of resource configuration for updates
+    # Generate diff of resource configuration for updates except for Secrets
     diff = None
-    if operation == "UPDATE":
+    if operation == "UPDATE" and kind != "Secret":
         useless_paths = current_app.config.get("USELESS_DIFF_PATHS_REGEXPS")
         diff = get_diff(review["request"]["oldObject"],
                         review["request"]["object"],

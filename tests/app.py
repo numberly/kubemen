@@ -12,7 +12,7 @@ def test_post_skip_alerting_service_account(client):
         "request": {
             "namespace": "magrathea",
             "object": {
-                "kind": "Secret",
+                "kind": "PersistentVolumeClaims",
                 "metadata": {
                     "name": "the-answer-to-the-ultimate-question"
                 }
@@ -35,7 +35,7 @@ def test_post_skip_alerting_no_domain(client):
         "request": {
             "namespace": "magrathea",
             "object": {
-                "kind": "Secret",
+                "kind": "PersistentVolumeClaims",
                 "metadata": {
                     "name": "the-answer-to-the-ultimate-question"
                 }
@@ -66,7 +66,7 @@ def test_post_create_deployment(client):
                 }
             },
             "oldObject": {
-                "kind": "Secret",
+                "kind": "PersistentVolumeClaims",
                 "metadata": {
                     "name": "the-answer-to-the-ultimate-question"
                 }
@@ -159,7 +159,7 @@ def test_post_delete(client):
         "request": {
             "namespace": "magrathea",
             "oldObject": {
-                "kind": "Secret",
+                "kind": "PersistentVolumeClaims",
                 "metadata": {
                     "name": "the-answer-to-the-ultimate-question"
                 }
