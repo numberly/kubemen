@@ -15,9 +15,7 @@ def send(change, character, user, *, fancyness_level, hook_url, icons_base_url,
          text_message_format, **_):
     fields = []
     if change.images:
-        value = ""
-        for image in change.images:
-            value += "- `{}`\n".format(image)
+        value = "".join(["- `{}`\n".format(image) for image in change.images])
         fields.append({"title": "Images", "value": value})
     if change.diff:
         fields.append({"title": "YAML configuration diff",
