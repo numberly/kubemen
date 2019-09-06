@@ -60,8 +60,9 @@ def kubemen():
     # Dispatch to connectors
     for connector in current_app.config.get("ENABLED_CONNECTORS"):
         module_name = "kubemen.connectors.{}".format(connector)
-        module = importlib.import_module(module_name)
-        if not hasattr(module, "send"):
+        try:
+            module = importlib.import_module(module_name)
+        except ImportError:
             logging.warning("Invalid connector: {}".format(connector))
         else:
             namespace = connector.upper() + "_"
