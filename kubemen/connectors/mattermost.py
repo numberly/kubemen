@@ -42,7 +42,6 @@ def send(change, character, user, *, fancyness_level, hook_url, icons_base_url,
         thumb_url = urljoin(icons_base_url, "kubemen.png")
         message["attachments"][0].update(thumb_url=thumb_url)
     if fancyness_level > 1:  # TODO: test fancyness
-        # Randomly select a Watchmen member as notifier
         icon_url = urljoin(icons_base_url, character.icon_filename)
         message.update(username=character.name, icon_url=icon_url)
 
