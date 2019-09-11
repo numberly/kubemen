@@ -18,6 +18,14 @@ def test_change_operation_without_diff(change):
     assert change.operation == "RELOAD"
 
 
+def test_change_name(change):
+    assert change.name == "the-answer-to-the-ultimate-question"
+
+
+def test_change_kind(change):
+    assert change.kind == "Deployment"
+
+
 def test_change_images(change):
     assert len(change.images) == 1
     assert change.images[0] == "6.9"
@@ -36,6 +44,10 @@ def test_change_diff_for_secrets(change):
     change.review["request"]["oldObject"]["kind"] = "Secret"
     change.review["request"]["object"]["kind"] = "Secret"
     assert change.diff is None
+
+
+def test_change_namespace(change):
+    assert change.namespace == "magrathea"
 
 
 @pytest.fixture
