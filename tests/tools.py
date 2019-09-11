@@ -2,8 +2,8 @@ import random
 
 import pytest
 
-from kubemen.tools import (cached_property, dump, exclude_useless_paths,
-                            flatten, get_diff)
+from kubemen.tools import (cached_property, cast, dump, exclude_useless_paths,
+                            flatten, get_diff, import_class)
 
 
 def test_flatten():
@@ -60,3 +60,35 @@ def test_cached_property():
     assert foo.randint() != foo.randint()
     foo.randint = cached_property(foo.randint)
     assert foo.randint == foo.randint
+
+
+def test_import_class():
+    with pytest.raises(ValueError):
+        import_class("invalid")
+    with pytest.raises(ImportError):
+        import_class("unknown.module.Class")
+    with pytest.raises(ImportError):
+        import_class("kubemen.UnknownClass")
+    assert import_class("kubemen.connectors.base.Connector")
+
+
+def test_cast():
+    assert cast(0, 1) == 1
+    assert cast("0", 1) == "1"
+    assert cast(0, "1") == 1
+    assert cast(False, "1") is True
+    assert cast(False, "0") is False
+    assert cast(False, "true") is True
+    assert cast(False, "false") is False
+    assert cast(False, "True") is True
+    assert cast(False, "False") is False
+    assert cast([False], "1") == [True]
+    assert cast((False,), "1") == (True,)
+    assert cast([], "0,1") == ["0", "1"]
+    assert cast([False], "0,1") == [False, True]
+    assert cast([False], "0,1") == [False, True]
+
+    with pytest.raises(ValueError):
+        cast(False, "invalid")
+    with pytest.raises(ValueError):
+        cast(0, "invalid")

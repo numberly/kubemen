@@ -73,7 +73,7 @@ def test_post_delete(client, review):
 def test_invalid_connector(client, review, caplog):
     from kubemen.app import app
 
-    app.config["ENABLED_CONNECTORS"] = ["invalid"]
+    app.config["AVAILABLE_CONNECTORS"] = ["invalid"]
     response = client.post("/", data=json.dumps(review))
     assert response.status_code == 200
     data = response.get_json()

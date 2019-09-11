@@ -7,3 +7,5 @@ Documentation
    :maxdepth: 2
 
    endpoints
+   configuration
+   internals

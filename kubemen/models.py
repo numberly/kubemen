@@ -21,6 +21,19 @@ class Change(types.SimpleNamespace):
         return self.review["request"]["object"]
 
     @cached_property
+    def _annotations(self):
+        return self.object["metadata"].get("annotations", {})
+
+    @cached_property
+    def annotations(self):
+        annotations = {}
+        for key, value in self._annotations.items():
+            prefix, key = key.split("/", 1)
+            if prefix == self.annotations_prefix:
+                annotations[key] = value
+        return annotations
+
+    @cached_property
     def name(self):
         return self.object["metadata"]["name"]
 

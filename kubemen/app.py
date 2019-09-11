@@ -1,4 +1,3 @@
-import importlib
 import logging
 import random
 import re
@@ -7,12 +6,16 @@ from flask import current_app, request
 from flask_stupe.json import Stupeflask
 
 from kubemen.models import Change, Character, User
+from kubemen.tools import import_class
 
 CHARACTER_NAMES = ["Doctor Manhattan", "Nite Owl", "Ozymandias", "Rorschach",
                    "Silk Spectre", "The Comedian"]
 
 app = Stupeflask("kubemen")
 app.config["METADATA_WRAPPING"] = False
+
+if app.config.get("APP_DEBUG"):
+    logging.getLogger().setLevel(logging.DEBUG)
 
 
 @app.route("/", methods=["GET"])
@@ -46,30 +49,23 @@ def kubemen():
     formatted_username = username_format.format(*match.groups())
     user = User(name=username, formatted_name=formatted_username)
 
+    annotations_prefix = current_app.config.get("ANNOTATIONS_PREFIX")
     useless_paths = current_app.config.get("USELESS_DIFF_PATHS_REGEXPS")
-    change = Change(review=review, useless_paths=useless_paths)
+    change = Change(review=review, annotations_prefix=annotations_prefix,
+                    useless_paths=useless_paths)
 
     character_name = random.choice(CHARACTER_NAMES)
     character = Character(name=character_name)
 
-    global_config = {
-        "fancyness_level": current_app.config.get("FANCYNESS_LEVEL", 2),
-        "icons_base_url": current_app.config.get("ICONS_BASE_URL", "")
-    }
-
-    # Dispatch to connectors
-    for connector in current_app.config.get("ENABLED_CONNECTORS"):
-        module_name = "kubemen.connectors.{}".format(connector)
+    for connector_path in current_app.config.get("AVAILABLE_CONNECTORS"):
         try:
-            module = importlib.import_module(module_name)
-        except ImportError:
-            logging.warning("Invalid connector: {}".format(connector))
+            connector_cls = import_class(connector_path)
+        except (ImportError, ValueError) as error:
+            logging.warning("Invalid connector: {}".format(error))
         else:
-            namespace = connector.upper() + "_"
-            config = current_app.config.get_namespace(namespace)
-            for key, value in global_config.items():
-                config.setdefault(key, value)
-            module.send(change, character, user, **config)
+            connector = connector_cls(current_app.config, change.annotations)
+            if connector.enable:
+                connector.send(change, character, user)
     return review
 
 

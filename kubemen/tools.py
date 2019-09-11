@@ -1,5 +1,6 @@
 import difflib
 import functools
+import importlib
 import json
 import re
 
@@ -60,3 +61,33 @@ def get_diff(d1, d2, useless_paths=None):
 
 
 cached_property = functools.lru_cache()(property)
+
+
+def import_class(path):
+    try:
+        module_path, cls_name = path.rsplit(".", 1)
+    except ValueError:
+        raise ValueError("'{}' is not a valid class path".format(path))
+    module = importlib.import_module(module_path)
+    try:
+        cls = getattr(module, cls_name)
+    except AttributeError:
+        raise ImportError("'{}' does not exist in '{}'".format(cls_name, path))
+    return cls
+
+
+def cast(old, new):
+    if type(old) == type(new):
+        return new
+    if isinstance(new, str):
+        if isinstance(old, bool):
+            if new in ("1", "true", "True"):
+                return True
+            if new in ("0", "false", "False"):
+                return False
+            raise ValueError
+        if isinstance(old, (list, tuple)):
+            new = new.split(",")
+            if len(old):
+                return type(old)(cast(old[0], o) for o in new)
+    return type(old)(new)

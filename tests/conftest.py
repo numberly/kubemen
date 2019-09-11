@@ -25,6 +25,11 @@ def review():
             "object": {
                 "kind": "Deployment",
                 "metadata": {
+                    "annotations": {
+                        "foo/bar": "baz",
+                        "kubemen.numberly.com/fancyness-level": "1",
+                        "kubemen.numberly.com/mattermost.fancyness-level": "2"
+                    },
                     "name": "the-answer-to-the-ultimate-question"
                 },
                 "spec": {
@@ -34,6 +39,11 @@ def review():
             "oldObject": {
                 "kind": "Deployment",
                 "metadata": {
+                    "annotations": {
+                        "foo/bar": "baz",
+                        "kubemen.numberly.com/fancyness-level": "1",
+                        "kubemen.numberly.com/mattermost.fancyness-level": "2"
+                    },
                     "name": "the-answer-to-the-ultimate-question"
                 },
                 "spec": {

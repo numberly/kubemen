@@ -5,7 +5,8 @@ from kubemen.models import Change, Character
 
 @pytest.fixture
 def change(review):
-    return Change(review=review, useless_paths=[])
+    return Change(review=review, annotations_prefix="kubemen.numberly.com",
+                  useless_paths=[])
 
 
 def test_change_operation(change):
@@ -16,6 +17,12 @@ def test_change_operation_without_diff(change):
     del change.review["request"]["oldObject"]["spec"]
     del change.review["request"]["object"]["spec"]
     assert change.operation == "RELOAD"
+
+
+def test_change_annotations(change):
+    assert "foo/bar" not in change.annotations
+    assert "bar" not in change.annotations
+    assert "fancyness-level" in change.annotations
 
 
 def test_change_name(change):
