@@ -17,12 +17,6 @@ author = 'Numberly'
 
 html_theme = 'alabaster'
 html_sidebars = {
-    'index': [
-        'about.html',
-        'navigation.html',
-        'searchbox.html',
-        'github-corners.html'
-    ],
     '**': [
         'sidebarlogo.html',
         'navigation.html',
