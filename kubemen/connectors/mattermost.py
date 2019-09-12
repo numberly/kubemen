@@ -38,7 +38,7 @@ class Mattermost(Connector):
         if fields:
             color = self._message_style[change.operation]["color"]
             attachment = {"color": color, "fields": fields}
-            message.update({"attachments": [attachment]})
+            message.update(attachments=[attachment])
 
         if self.attach_badge and fields:
             message["attachments"][0].update(thumb_url=self.badge_url)
