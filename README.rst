@@ -4,7 +4,7 @@
 |
 
 .. image:: https://img.shields.io/github/v/release/numberly/kubemen
-   :target: https://github.com/numberly/thingy/releases
+   :target: https://github.com/numberly/kubemen/releases
 .. image:: https://img.shields.io/github/license/numberly/kubemen.svg
    :target: https://github.com/numberly/kubemen/blob/master/LICENSE
 .. image:: https://img.shields.io/docker/build/numberly/kubemen
