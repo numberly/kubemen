@@ -74,6 +74,8 @@ MATTERMOST_BADGE_URL = "https://raw.githubusercontent.com/numberly/kubemen/maste
 
 #: Whether to replace the default Mattermost webhook's avatar and name with a
 #: Watchmen character (i.e. `Rorschach`, `Doctor Manhattan`, etc) or not.
+#: If disabled, the image and name configured in Mattermost at the creation of
+#: the webhook will be used.
 MATTERMOST_USE_RANDOM_CHARACTER = True
 
 #: If :obj:`~MATTERMOST_USE_RANDOM_CHARACTER` is true, define the base URL on
