@@ -63,6 +63,12 @@ MATTERMOST_ENABLE = True
 #: URL that Kubemen will use to send messages to Mattermost.
 MATTERMOST_HOOK_URL = ""
 
+#: The Mattermost channel on which the message should be posted. Keep blank to
+#: use the default channel (the one that was configured in Mattermost when
+#: creating the webhook). Make sure that the webhook is not "locked" to a
+#: channel in its configuration.
+MATTERMOST_CHANNEL_ID = ""
+
 #: How to format messages sent to Mattermost.
 MATTERMOST_TEXT_MESSAGE_FORMAT = "{emoji} **{operation}** of `{kind}` **{name}** by `{username}` in `{namespace}` {hashtag}"
 

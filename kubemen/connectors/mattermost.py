@@ -32,9 +32,12 @@ class Mattermost(Connector):
                                                name=change.name,
                                                operation=change.operation,
                                                username=user.formatted_name)
+        message = {"text": text}
 
-        # TODO: retrieve channel_id from annotation
-        message = {"channel_id": "bot", "text": text}
+        # TODO: test me
+        if self.channel_id:  # pragma: no cover
+            message.update(channel=self.channel_id)
+
         if fields:
             color = self._message_style[change.operation]["color"]
             attachment = {"color": color, "fields": fields}
