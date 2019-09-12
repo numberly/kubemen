@@ -32,7 +32,7 @@ ANNOTATIONS_PREFIX = "kubemen.numberly.com"
 #: :obj:`~USERNAME_REGEXP`.
 USERNAME_FORMAT = "{0}"
 
-#: What usernames should be taken in account and how it should be extracted.
+#: What usernames should be taken into account and how to extract them.
 #: If you want to keep everything, and not just the first part of an email as
 #: in the default value, use the following one (be cautious though, this will
 #: allow serviceaccounts): ``USERNAMES_REGEX = r"(.*)"``
