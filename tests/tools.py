@@ -3,7 +3,7 @@ import random
 import pytest
 
 from kubemen.tools import (cached_property, cast, dump, exclude_useless_paths,
-                            flatten, get_diff, import_class)
+                           flatten, get_diff, import_class)
 
 
 def test_flatten():
