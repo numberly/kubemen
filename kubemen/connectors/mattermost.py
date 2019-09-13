@@ -34,8 +34,7 @@ class Mattermost(Connector):
                                                username=user.formatted_name)
         message = {"text": text}
 
-        # TODO: test me
-        if self.channel_id:  # pragma: no cover
+        if self.channel_id:
             message.update(channel=self.channel_id)
 
         if fields:

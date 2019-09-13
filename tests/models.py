@@ -1,14 +1,3 @@
-import pytest
-
-from kubemen.models import Change, Character
-
-
-@pytest.fixture
-def change(review):
-    return Change(review=review, annotations_prefix="kubemen.numberly.com",
-                  useless_paths=[])
-
-
 def test_change_operation(change):
     assert change.operation == "UPDATE"
 
@@ -55,11 +44,6 @@ def test_change_diff_for_secrets(change):
 
 def test_change_namespace(change):
     assert change.namespace == "magrathea"
-
-
-@pytest.fixture
-def character(review):
-    return Character(name="Foo Bar")
 
 
 def test_character_icon_filename(character):

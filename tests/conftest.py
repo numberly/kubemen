@@ -2,7 +2,9 @@ import pytest
 import requests
 
 from kubemen.connectors.base import Connector
+from kubemen.models import Change, Character, User
 
+USERNAME = "deep_thought@numberly.com"
 
 class FakeConnector(Connector):
     pass
@@ -70,6 +72,23 @@ def review():
             },
             "operation": "UPDATE",
             "uid": "121593ce-bb88-4c69-1fa2-c4ea619cfa4c",
-            "userInfo": {"username": "deep_thought@numberly.com"}
+            "userInfo": {"username": USERNAME}
         }
     }
+
+
+@pytest.fixture
+def change(review):
+    return Change(review=review, annotations_prefix="kubemen.numberly.com",
+                  useless_paths=[])
+
+
+@pytest.fixture
+def character():
+    return Character(name="Foo Bar")
+
+
+@pytest.fixture
+def user(review):
+    formatted_name = USERNAME.split("@", 1)[0]
+    return User(name=USERNAME, formatted_name=formatted_name)
