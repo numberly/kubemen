@@ -1,21 +1,11 @@
 import pytest
 import requests
 
-from kubemen.app import app
 from kubemen.connectors.base import Connector
-
-app.app_context().__enter__()
 
 
 class FakeConnector(Connector):
     pass
-
-
-app.config["AVAILABLE_CONNECTORS"] = (
-    "tests.conftest.FakeConnector",
-)
-
-app.config["FAKECONNECTOR_ENABLE"] = True
 
 
 @pytest.fixture
@@ -25,7 +15,17 @@ def connector(mocker):
 
 
 @pytest.fixture
-def client():
+def app():
+    from kubemen.app import app
+    app.config["AVAILABLE_CONNECTORS"] = (
+        "tests.conftest.FakeConnector",
+    )
+    app.config["FAKECONNECTOR_ENABLE"] = True
+    return app
+
+
+@pytest.fixture
+def client(app):
     return app.test_client()
 
 
