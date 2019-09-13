@@ -9,7 +9,7 @@
    :target: https://github.com/numberly/kubemen/blob/master/LICENSE
 .. image:: https://img.shields.io/docker/cloud/build/numberly/kubemen
    :target: https://hub.docker.com/r/numberly/kubemen
-.. image:: https://img.shields.io/travis/numberly/kubemen?label=travis%20build
+.. image:: https://img.shields.io/travis/numberly/kubemen/master?label=travis%20build
    :target: https://travis-ci.org/numberly/kubemen
 .. image:: https://img.shields.io/coveralls/numberly/kubemen.svg
    :target: https://coveralls.io/github/numberly/kubemen
