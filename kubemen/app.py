@@ -21,7 +21,7 @@ if app.config.get("APP_DEBUG"):
 @app.route("/", methods=["GET"])
 def health():
     """200 as a service, for Kubernetes probes"""
-    return 200
+    return "", 200
 
 
 @app.route("/", methods=["POST"])
