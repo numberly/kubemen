@@ -32,6 +32,41 @@ def test_send_without_badge(app, change, character, user, mocker):
     assert "thumb_url" not in data["attachments"][0]
 
 
+def test_send_without_images(app, change, character, user, mocker):
+    app.config["MATTERMOST_ATTACH_IMAGES"] = False
+    app.config["MATTERMOST_ATTACH_DIFF"] = True
+    mattermost = Mattermost(app.config, {})
+    mocker.patch("requests.post")
+    mattermost.send(change, character, user)
+    args, kwargs = requests.post.call_args
+    data = json.loads(kwargs["data"])
+    assert len(data["attachments"][0]["fields"]) == 1
+    assert "diff" in data["attachments"][0]["fields"][0]["title"]
+
+
+def test_send_without_diff(app, change, character, user, mocker):
+    app.config["MATTERMOST_ATTACH_IMAGES"] = True
+    app.config["MATTERMOST_ATTACH_DIFF"] = False
+    mattermost = Mattermost(app.config, {})
+    mocker.patch("requests.post")
+    mattermost.send(change, character, user)
+    args, kwargs = requests.post.call_args
+    data = json.loads(kwargs["data"])
+    assert len(data["attachments"][0]["fields"]) == 1
+    assert data["attachments"][0]["fields"][0]["title"] == "Images"
+
+
+def test_send_without_attachments(app, change, character, user, mocker):
+    app.config["MATTERMOST_ATTACH_IMAGES"] = False
+    app.config["MATTERMOST_ATTACH_DIFF"] = False
+    mattermost = Mattermost(app.config, {})
+    mocker.patch("requests.post")
+    mattermost.send(change, character, user)
+    args, kwargs = requests.post.call_args
+    data = json.loads(kwargs["data"])
+    assert "attachments" not in data
+
+
 def test_send_with_channel_id(app, change, character, user, mocker):
     app.config["MATTERMOST_CHANNEL_ID"] = "foo"
     mattermost = Mattermost(app.config, {})

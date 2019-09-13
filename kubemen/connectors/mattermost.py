@@ -16,11 +16,11 @@ class Mattermost(Connector):
 
     def send(self, change, character, user):
         fields = []
-        if change.images:
+        if self.attach_images and change.images:
             value = "".join(["- `{}`\n".format(image)
                              for image in change.images])
             fields.append({"title": "Images", "value": value})
-        if change.diff:
+        if self.attach_diff and change.diff:
             fields.append({"title": "YAML configuration diff",
                            "value": "```diff\n{}```".format(change.diff)})
 

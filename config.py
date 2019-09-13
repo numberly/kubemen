@@ -72,6 +72,12 @@ MATTERMOST_CHANNEL_ID = ""
 #: How to format messages sent to Mattermost.
 MATTERMOST_TEXT_MESSAGE_FORMAT = "{emoji} **{operation}** of `{kind}` **{name}** by `{username}` in `{namespace}` {hashtag}"
 
+#: Whether to list images used by Deployments or not.
+MATTERMOST_ATTACH_IMAGES = True
+
+#: Whether to display a diff of the resource's configuration or not.
+MATTERMOST_ATTACH_DIFF = True
+
 #: Whether to add a fancy badge to attachments (it's more visible) or not.
 MATTERMOST_ATTACH_BADGE = True
 
