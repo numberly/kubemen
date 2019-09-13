@@ -39,7 +39,8 @@ def test_post_create_deployment(client, review, connector):
     response = client.post("/", data=json.dumps(review))
     assert _is_allowed(response)
     assert connector.send.call_count == 1
-    assert connector.send.call_args[0][0].operation == "CREATE"
+    args, kwargs = connector.send.call_args
+    assert args[0].operation == "CREATE"
 
 
 def test_post_reload(client, review, connector):
@@ -48,7 +49,8 @@ def test_post_reload(client, review, connector):
     response = client.post("/", data=json.dumps(review))
     assert _is_allowed(response)
     assert connector.send.call_count == 1
-    assert connector.send.call_args[0][0].operation == "RELOAD"
+    args, kwargs = connector.send.call_args
+    assert args[0].operation == "RELOAD"
 
 
 def test_post_delete(client, review, connector):
@@ -57,7 +59,8 @@ def test_post_delete(client, review, connector):
     response = client.post("/", data=json.dumps(review))
     assert _is_allowed(response)
     assert connector.send.call_count == 1
-    assert connector.send.call_args[0][0].operation == "DELETE"
+    args, kwargs = connector.send.call_args
+    assert args[0].operation == "DELETE"
 
 
 def test_invalid_connector(client, review, connector, caplog):
