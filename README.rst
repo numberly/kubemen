@@ -3,7 +3,7 @@
 
 |
 
-.. image:: https://img.shields.io/github/v/release/numberly/kubemen
+.. image:: https://img.shields.io/github/v/tag/numberly/kubemen
    :target: https://github.com/numberly/kubemen/releases
 .. image:: https://img.shields.io/github/license/numberly/kubemen.svg
    :target: https://github.com/numberly/kubemen/blob/master/LICENSE
