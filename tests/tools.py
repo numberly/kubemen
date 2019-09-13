@@ -1,4 +1,5 @@
 import random
+import sys
 
 import pytest
 
@@ -54,7 +55,7 @@ def test_get_diff():
 def test_cached_property():
     class Foo:
         def randint(self):
-            return random.randint(0, 100)
+            return random.randint(0, sys.maxsize)
 
     foo = Foo()
     assert foo.randint() != foo.randint()
