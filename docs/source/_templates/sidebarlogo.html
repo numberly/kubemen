@@ -1,3 +1,13 @@
-<p class="logo"><a href="{{ pathto(master_doc) }}">
-  <img class="logo" src="https://raw.githubusercontent.com/numberly/kubemen/master/artwork/icons/kubemen.png" alt="Logo"/>
-</a></p>
+<p class="logo">
+  <a href="{{ pathto(master_doc) }}">
+    <img class="logo" alt="Logo"/>
+  </a>
+</p>
+
+<script>
+  var basePath = "https://raw.githubusercontent.com/numberly/kubemen/master/artwork/icons/";
+  var imageArray = ["doctor_manhattan", "nite_owl", "ozymandias", "rorschach", "silk_spectre", "the_comedian"];
+  var index = Math.floor(Math.random() * imageArray.length);
+  image = document.getElementsByClassName("logo")[1]
+  image.src = basePath + imageArray[index] + ".png"
+</script>
