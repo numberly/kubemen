@@ -9,6 +9,7 @@ def test_change_operation_without_diff(change):
 
 
 def test_change_annotations(change):
+    assert "foo" not in change.annotations
     assert "foo/bar" not in change.annotations
     assert "bar" not in change.annotations
     assert "fancyness-level" in change.annotations

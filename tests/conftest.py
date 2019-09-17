@@ -46,6 +46,7 @@ def review():
                 "kind": "Deployment",
                 "metadata": {
                     "annotations": {
+                        "foo": "bar",
                         "foo/bar": "baz",
                         "kubemen.numberly.com/fancyness-level": "1",
                         "kubemen.numberly.com/mattermost.fancyness-level": "2"
@@ -60,6 +61,7 @@ def review():
                 "kind": "Deployment",
                 "metadata": {
                     "annotations": {
+                        "foo": "bar",
                         "foo/bar": "baz",
                         "kubemen.numberly.com/fancyness-level": "1",
                         "kubemen.numberly.com/mattermost.fancyness-level": "2"

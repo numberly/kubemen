@@ -28,7 +28,10 @@ class Change(types.SimpleNamespace):
     def annotations(self):
         annotations = {}
         for key, value in self._annotations.items():
-            prefix, key = key.split("/", 1)
+            try:
+                prefix, key = key.split("/", 1)
+            except ValueError:
+                continue
             if prefix == self.annotations_prefix:
                 annotations[key] = value
         return annotations
