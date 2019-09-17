@@ -57,7 +57,7 @@ AVAILABLE_CONNECTORS = (
 #: This can still be overriden for any given resource with the
 #: ``kubemen.numberly.com/mattermost.enable`` annotation. See
 #: :obj:`AVAILABLE_CONNECTORS` if you wish to forbid this connector.
-MATTERMOST_ENABLE = True
+MATTERMOST_ENABLE = False
 
 #: Hook URL as defined with the "Incoming Webhook" configuration. This is the
 #: URL that Kubemen will use to send messages to Mattermost.
@@ -98,4 +98,4 @@ MATTERMOST_ICONS_BASE_URL = "https://raw.githubusercontent.com/numberly/kubemen/
 #: This can still be overriden for any given resource with the
 #: ``kubemen.numberly.com/mattermost.enable`` annotation. See
 #: :obj:`AVAILABLE_CONNECTORS` if you wish to forbid this connector.
-EMAIL_ENABLE = True
+EMAIL_ENABLE = False
