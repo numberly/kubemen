@@ -23,9 +23,26 @@ def test_change_kind(change):
     assert change.kind == "Deployment"
 
 
-def test_change_images(change):
+def test_change_images_cronjob(change):
+    change.review["request"]["object"]["kind"] = "CronJob"
+    change.review["request"]["object"]["spec"] = {
+        "jobTemplate": {
+            "spec": {"template": {"spec": {"containers": [{"image": "6.9"}]}}}
+        }
+    }
     assert len(change.images) == 1
     assert change.images[0] == "6.9"
+
+
+def test_change_images_deployment(change):
+    change.review["request"]["object"]["kind"] = "Deployment"
+    assert len(change.images) == 1
+    assert change.images[0] == "6.9"
+
+
+def test_change_images_secret(change):
+    change.review["request"]["object"]["kind"] = "Secret"
+    assert change.images == []
 
 
 def test_change_images_without_image(change):
