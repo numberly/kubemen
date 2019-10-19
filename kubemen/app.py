@@ -38,7 +38,7 @@ def kubemen():
            <https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response>`_
     """
     review = request.get_json(force=True)
-    review.update(response={"uid": review["request"]["uid"], "allowed": True})
+    review["response"] = {"uid": review["request"]["uid"], "allowed": True}
 
     username_regexp = current_app.config.get("USERNAME_REGEXP")
     username_format = current_app.config.get("USERNAME_FORMAT")
