@@ -1,5 +1,6 @@
 -r requirements.txt
 
+flake8
 flake8-isort
 isort
 pytest
