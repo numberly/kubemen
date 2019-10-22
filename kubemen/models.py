@@ -46,9 +46,14 @@ class Change(types.SimpleNamespace):
 
     @cached_property
     def images(self):
+        spec = {}
         try:
+            if self.kind == "CronJob":
+                spec = self.object["spec"]["jobTemplate"]["spec"]
+            elif self.kind == "Deployment":
+                spec = self.object["spec"]
             return [container["image"] for container
-                    in self.object["spec"]["template"]["spec"]["containers"]]
+                    in spec["template"]["spec"]["containers"]]
         except KeyError:
             return []
 
