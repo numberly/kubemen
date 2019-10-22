@@ -9,7 +9,7 @@ metadata:
 webhooks:
 - name: kubemen.kubemen.svc
   failurePolicy: Ignore
-  sideEffects: Some
+  sideEffects: NoneOnDryRun
   rules:
   - operations: ["CREATE", "UPDATE", "DELETE"]
     apiGroups: ["*"]

@@ -19,6 +19,13 @@ def test_post(client, review, connector):
     assert connector.send.call_count == 1
 
 
+def test_post_skip_alerting_dryrun(client, review, connector):
+    review["dryRun"] = True
+    response = client.post("/", data=json.dumps(review))
+    assert _is_allowed(response)
+    assert connector.send.call_count == 0
+
+
 def test_post_skip_alerting_service_account(client, review, connector):
     review["request"]["userInfo"]["username"] = "serviceaccount:foo"
     response = client.post("/", data=json.dumps(review))
