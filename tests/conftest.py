@@ -39,6 +39,7 @@ def mattermock(mocker):
 @pytest.fixture
 def review():
     return {
+        "dryRun": False,
         "kind": "AdmissionReview",
         "request": {
             "namespace": "magrathea",

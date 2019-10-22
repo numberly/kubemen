@@ -34,11 +34,16 @@ def kubemen():
     All review requests are allowed in order to be as transparent as
     possible for the cluster.
 
+    This endpoint is dryRun-aware, meaning no message will be sent for a
+    request with dryRun: true.
+
     :json: A complete `AdmissionReview object
            <https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response>`_
     """
     review = request.get_json(force=True)
     review["response"] = {"uid": review["request"]["uid"], "allowed": True}
+    if review.get("dryRun"):
+        return review
 
     username_regexp = current_app.config.get("USERNAME_REGEXP")
     username_format = current_app.config.get("USERNAME_FORMAT")
