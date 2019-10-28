@@ -84,5 +84,5 @@ def test_send_without_random_character(app, change, character, user, mocker):
     mattermost.send(change, character, user)
     args, kwargs = requests.post.call_args
     data = json.loads(kwargs["data"])
-    assert "username" not in data
-    assert "icon_url" not in data
+    assert "Kubemen" in data["username"]
+    assert "kubernetes.png" in data["icon_url"]
