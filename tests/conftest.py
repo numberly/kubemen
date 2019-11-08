@@ -6,6 +6,7 @@ from kubemen.models import Change, Character, User
 
 USERNAME = "deep_thought@numberly.com"
 
+
 class FakeConnector(Connector):
     pass
 
