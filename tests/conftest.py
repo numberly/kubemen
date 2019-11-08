@@ -32,11 +32,6 @@ def client(app):
     return app.test_client()
 
 
-@pytest.fixture(autouse=True)
-def mattermock(mocker):
-    mocker.patch.object(requests, "post")
-
-
 @pytest.fixture
 def review():
     return {
