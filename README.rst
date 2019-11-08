@@ -40,18 +40,11 @@ Kubernetes
 
 Requirements:
 
-* RBAC being enabled on your cluster
-* the ValidatingAdmissionWebhook admission controller being enabled too
+* ValidatingAdmissionWebhooks being enabled on your cluster
 * you being an administrator of the cluster
 
 If these requirements are fulfilled, installing Kubemen on your cluster is
 pretty straightforward:
-
-* setup the namespace and RBAC stuff with:
-
-.. code-block:: bash
-
-    $ kubectl apply -f deploy/configuration.yaml
 
 * create TLS certificates for the service and sign them through the CSR API:
 
