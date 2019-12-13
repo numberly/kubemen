@@ -24,7 +24,6 @@ webhooks:
     "cronjobs",
     "daemonsets",
     "deployments",
-    "events",
     "horizontalpodautoscalers",
     "ingresses",
     "jobs",
