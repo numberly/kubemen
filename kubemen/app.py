@@ -42,22 +42,27 @@ def kubemen():
     """
     review = request.get_json(force=True)
     review["response"] = {"uid": review["request"]["uid"], "allowed": True}
-    if review.get("dryRun"):
-        return review
 
-    username_regexp = current_app.config.get("USERNAME_REGEXP")
-    username_format = current_app.config.get("USERNAME_FORMAT")
-    username = review["request"]["userInfo"]["username"]
-    match = re.match(username_regexp, username)
-    if not match:
+    if review.get("dryRun"):
+        logging.debug("Skipping dryRun")
         return review
-    formatted_username = username_format.format(*match.groups())
-    user = User(name=username, formatted_name=formatted_username)
 
     annotations_prefix = current_app.config.get("ANNOTATIONS_PREFIX")
     useless_paths = current_app.config.get("USELESS_DIFF_PATHS_REGEXPS")
     change = Change(review=review, annotations_prefix=annotations_prefix,
                     useless_paths=useless_paths)
+    logging.debug("{}: {} {}/{} ()".format(change.operation, change.kind,
+                                           change.namespace, change.name,
+                                           change.username))
+
+    username_regexp = current_app.config.get("USERNAME_REGEXP")
+    username_format = current_app.config.get("USERNAME_FORMAT")
+    match = re.match(username_regexp, change.username)
+    if not match:
+        logging.debug("Skipping mismatching username")
+        return review
+    formatted_username = username_format.format(*match.groups())
+    user = User(name=change.username, formatted_name=formatted_username)
 
     character_name = random.choice(CHARACTER_NAMES)
     character = Character(name=character_name)
@@ -70,6 +75,7 @@ def kubemen():
         else:
             connector = connector_cls(current_app.config, change.annotations)
             if connector.enable:
+                logging.debug("Calling connector: {}".format(connector_path))
                 connector.send(change, character, user)
     return review
 

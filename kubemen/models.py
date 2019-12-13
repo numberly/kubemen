@@ -68,6 +68,10 @@ class Change(types.SimpleNamespace):
     def namespace(self):
         return self.review["request"]["namespace"]
 
+    @cached_property
+    def username(self):
+        return self.review["request"]["userInfo"]["username"]
+
 
 class Character(types.SimpleNamespace):
     @cached_property
