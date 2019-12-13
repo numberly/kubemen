@@ -51,7 +51,7 @@ def kubemen():
     useless_paths = current_app.config.get("USELESS_DIFF_PATHS_REGEXPS")
     change = Change(review=review, annotations_prefix=annotations_prefix,
                     useless_paths=useless_paths)
-    logging.debug("{}: {} {}/{} ()".format(change.operation, change.kind,
+    logging.debug("{}: {} {}/{} ({})".format(change.operation, change.kind,
                                            change.namespace, change.name,
                                            change.username))
 
