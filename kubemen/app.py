@@ -52,8 +52,8 @@ def kubemen():
     change = Change(review=review, annotations_prefix=annotations_prefix,
                     useless_paths=useless_paths)
     logging.debug("{}: {} {}/{} ({})".format(change.operation, change.kind,
-                                           change.namespace, change.name,
-                                           change.username))
+                                             change.namespace, change.name,
+                                             change.username))
 
     username_regexp = current_app.config.get("USERNAME_REGEXP")
     username_format = current_app.config.get("USERNAME_FORMAT")
