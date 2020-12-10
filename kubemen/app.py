@@ -43,7 +43,7 @@ def kubemen():
     review = request.get_json(force=True)
     review["response"] = {"uid": review["request"]["uid"], "allowed": True}
 
-    if review.get("dryRun"):
+    if review["request"].get("dryRun"):
         logging.debug("Skipping dryRun")
         return review
 
