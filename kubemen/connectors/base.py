@@ -54,14 +54,14 @@ class Connector:
             try:
                 current_value = getattr(self, key)
             except AttributeError:
-                logging.warning("'{}': unkown option '{}', ignoring option"
-                                .format(name, key))
+                message = "'{}': unkown option '{}', ignoring option"
+                logging.warning(message.format(name, key))
                 continue
             try:
                 value = cast(current_value, value)
             except ValueError:
-                logging.warning("'{}': can not cast '{}', ignoring option"
-                                .format(name, key, type(value)))
+                message = "'{}': can not cast '{}' to '{}', ignoring option"
+                logging.warning(message.format(name, key, type(value)))
                 continue
             setattr(self, key, value)
 
