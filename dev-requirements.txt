@@ -3,7 +3,7 @@
 flake8
 flake8-isort
 isort
-pytest
+pytest==6.1.2
 pytest-cov
 pytest-env
 pytest-mock
