@@ -35,9 +35,9 @@ def client(app):
 @pytest.fixture
 def review():
     return {
-        "dryRun": False,
         "kind": "AdmissionReview",
         "request": {
+            "dryRun": False,
             "namespace": "magrathea",
             "object": {
                 "kind": "Deployment",

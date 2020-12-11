@@ -20,7 +20,7 @@ def test_post(client, review, connector):
 
 
 def test_post_skip_alerting_dryrun(client, review, connector):
-    review["dryRun"] = True
+    review["request"]["dryRun"] = True
     response = client.post("/", data=json.dumps(review))
     assert _is_allowed(response)
     assert connector.send.call_count == 0
