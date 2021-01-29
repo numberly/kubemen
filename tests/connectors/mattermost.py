@@ -78,11 +78,13 @@ def test_send_with_channel_id(app, change, character, user, mocker):
 
 
 def test_send_without_random_character(app, change, character, user, mocker):
+    app.config["MATTERMOST_USERNAME"] = "Kubemen"
+    app.config["MATTERMOST_ICON_URL"] = "kubernetes.png"
     app.config["MATTERMOST_USE_RANDOM_CHARACTER"] = False
     mattermost = Mattermost(app.config, {})
     mocker.patch("requests.post")
     mattermost.send(change, character, user)
     args, kwargs = requests.post.call_args
     data = json.loads(kwargs["data"])
-    assert "username" not in data
-    assert "icon_url" not in data
+    assert "Kubemen" in data["username"]
+    assert "kubernetes.png" in data["icon_url"]

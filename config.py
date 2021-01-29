@@ -84,10 +84,16 @@ MATTERMOST_ATTACH_BADGE = True
 #: If :obj:`~MATTERMOST_ATTACH_BADGE` is true, define the badge URL.
 MATTERMOST_BADGE_URL = "https://raw.githubusercontent.com/numberly/kubemen/master/artwork/icons/kubemen.png"
 
-#: Whether to replace the default Mattermost webhook's avatar and name with a
-#: Watchmen character (i.e. `Rorschach`, `Doctor Manhattan`, etc) or not.
-#: If disabled, the image and name configured in Mattermost at the creation of
-#: the webhook will be used.
+#: The Mattermost custom username for the message that will be posted.
+#: If set, this will override name configured in Mattermost at the creation of the webhook.
+MATTERMOST_USERNAME = ""
+
+#: The Mattermost custom avatar for the message that will be posted.
+#: If set, this will override the image configured in Mattermost at the creation of the webhook.
+MATTERMOST_ICON_URL = ""
+
+#: Whether to replace the default or custom Mattermost avatar and name with
+#: a Watchmen character (i.e. `Rorschach`, `Doctor Manhattan`, etc) or not.
 MATTERMOST_USE_RANDOM_CHARACTER = True
 
 #: If :obj:`~MATTERMOST_USE_RANDOM_CHARACTER` is true, define the base URL on

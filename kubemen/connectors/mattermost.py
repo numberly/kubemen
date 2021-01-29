@@ -48,5 +48,10 @@ class Mattermost(Connector):
         if self.use_random_character:
             icon_url = urljoin(self.icons_base_url, character.icon_filename)
             message.update(username=character.name, icon_url=icon_url)
+        else:
+            if self.username:
+                message.update(username=self.username)
+            if self.icon_url:
+                message.update(icon_url=self.icon_url)
 
         requests.post(self.hook_url, data=json.dumps(message))
